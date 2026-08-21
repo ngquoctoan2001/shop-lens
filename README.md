@@ -1,0 +1,152 @@
+# lennhasuen — website giới thiệu đồ len handmade
+
+Trang web trưng bày sản phẩm len móc tay. **Không bán hàng trên web** — khách
+ưng mẫu nào thì bấm nút nhắn Zalo hoặc Messenger.
+
+---
+
+## Chạy thử trên máy
+
+```bash
+npm run dev
+```
+
+Rồi mở <http://localhost:3000>.
+
+Muốn tạo bản chạy thật:
+
+```bash
+npm run build
+npm start
+```
+
+---
+
+## Sửa nội dung ở đâu
+
+### 1. Đổi tên shop, số Zalo, link Facebook → `site.config.ts`
+
+Mở file này ra sửa, không cần đụng vào chỗ nào khác:
+
+```ts
+contact: {
+  zalo: "0969634653",
+  facebook: "https://www.facebook.com/xuyen.huynh.94801116",
+},
+```
+
+Trong đó còn có: tên shop, câu giới thiệu, dòng chữ chạy trên cùng, ba con số
+khoe ở đầu trang, và các câu chạy trên dải băng nghiêng.
+
+### 2. Đổi tên / mô tả sản phẩm → `data/products.json`
+
+Tên sản phẩm hiện tại là **tên tạm**, sửa thoải mái. Mỗi sản phẩm có dạng:
+
+```json
+{
+  "id": "mk-01",
+  "name": "Thỏ Mơ Váy Nâu",
+  "desc": "Thỏ nhỏ mặc váy nâu, kèm dây đeo tết tay",
+  "image": "/images/mockhoa-01-tho-vay-nau-day-deo.jpg"
+}
+```
+
+Chỉ sửa `name` và `desc`. **Giữ nguyên `id` và `image`.**
+
+### 3. Thêm sản phẩm mới
+
+1. Chép ảnh vào `public/images/`
+2. Đặt tên theo kiểu `danhmuc-số-mô-tả.jpg`, ví dụ `mockhoa-18-gau-ao-len.jpg`
+3. Mở `data/products.json`, thêm một khối mới vào đúng danh mục:
+
+```json
+{
+  "id": "mk-18",
+  "name": "Tên sản phẩm",
+  "desc": "Mô tả ngắn",
+  "image": "/images/mockhoa-18-gau-ao-len.jpg"
+}
+```
+
+Số đếm trên nút danh mục tự cộng thêm, không phải sửa tay.
+
+### 4. Đổi màu → `app/globals.css`
+
+Toàn bộ màu nằm trong khối `:root` ở đầu file, mỗi dòng có ghi chú tiếng Việt.
+
+> **Lưu ý:** ba màu `--ink-soft`, `--accent-3`, `--ring` dùng cho chữ và đã
+> được chỉnh để đạt tương phản tối thiểu 4.5:1 (chuẩn WCAG AA). Đổi sang tông
+> nhạt hơn thì chữ sẽ khó đọc, nhất là ngoài trời nắng.
+
+### 5. Đổi font → `app/layout.tsx`
+
+Đang dùng **Baloo 2** (tiêu đề) + **Nunito** (nội dung).
+
+> **Quan trọng:** font thay thế bắt buộc phải có `subsets: ["latin", "vietnamese"]`.
+> Thiếu `vietnamese` thì các chữ `ữ ũ ơ ậ ợ` sẽ rơi về font dự phòng và trông
+> lệch hẳn — đây chính là lỗi của font Fredoka lúc đầu.
+>
+> Font tròn dễ thương **có** tiếng Việt: `Baloo_2`, `Quicksand`, `Comfortaa`,
+> `Nunito`, `Be_Vietnam_Pro`, `Lexend`.
+> Font **không có** tiếng Việt, đừng dùng: `Fredoka`, `Varela Round`, `Comic Neue`.
+
+---
+
+## Cấu trúc thư mục
+
+```
+app/
+  layout.tsx        khai báo font, tiêu đề trang, thẻ chia sẻ mạng xã hội
+  page.tsx          ghép các phần của trang chủ lại
+  globals.css       bảng màu + hiệu ứng chuyển động
+components/
+  Header.tsx        thanh trên cùng, dính khi cuộn, menu điện thoại
+  Hero.tsx          màn hình đầu tiên
+  Marquee.tsx       dải băng chữ chạy
+  Gallery.tsx       lọc danh mục + lưới sản phẩm  (điều khiển popup)
+  ProductCard.tsx   thẻ một sản phẩm
+  Lightbox.tsx      popup xem ảnh lớn
+  About.tsx         ba bước đặt hàng
+  ContactCTA.tsx    khối nhắn Zalo / Messenger
+  Footer.tsx        chân trang
+lib/products.ts     đọc products.json, đếm số lượng theo danh mục
+data/products.json  toàn bộ sản phẩm
+public/images/      54 ảnh sản phẩm
+demo/               4 bản demo bảng màu (chỉ để tham khảo, không lên web)
+site.config.ts      thông tin shop + link liên hệ
+```
+
+---
+
+## Popup xem ảnh dùng thế nào
+
+Bấm vào thẻ sản phẩm bất kỳ:
+
+- Xem ảnh lớn kèm tên, mô tả, nút nhắn Zalo / Messenger
+- Bấm **Trước / Tiếp**, hoặc bấm phím **← →** để chuyển sản phẩm
+- **Vuốt trái/phải** trên điện thoại cũng chuyển được
+- **Esc** hoặc bấm ra ngoài để đóng
+
+Popup chỉ chạy trong danh mục đang lọc — đang xem "Túi & Ví" thì bấm Tiếp chỉ
+chuyển qua các mẫu túi ví, không nhảy sang danh mục khác.
+
+---
+
+## Đưa web lên mạng
+
+Cách nhanh nhất là [Vercel](https://vercel.com) (miễn phí, cùng nhà làm Next.js):
+
+1. Đẩy thư mục này lên GitHub
+2. Vào Vercel → Import repo → bấm Deploy, không cần chỉnh gì thêm
+
+Sau khi có tên miền thật, nhớ sửa `url` trong `site.config.ts` để link chia sẻ
+lên Facebook/Zalo hiện đúng ảnh và tiêu đề.
+
+---
+
+## Ghi chú
+
+- Ảnh sản phẩm nên chụp nền sạch (vải trắng hoặc be). Nhiều ảnh hiện tại chụp
+  trên bàn phím laptop — sản phẩm đẹp nhưng nền hơi rối.
+- Vài mẫu tạo hình theo nhân vật có bản quyền (Mickey, Snoopy, Kuromi,
+  Pompompurin, Miffy). Tên trên web đã đặt trung tính sẵn — nên giữ vậy.
