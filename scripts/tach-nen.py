@@ -18,7 +18,7 @@ from rembg import remove, new_session
 SRC = "public/images"
 DST = "public/cutouts"
 # Bỏ qua logo, không phải sản phẩm
-SKIP = {"logo-mark.png", "logo.jpg", "logo.png"}
+SKIP = {"logo-mark.webp", "logo.webp"}
 
 # Thu nhỏ trước khi tách cho nhanh
 MAX_SIZE = 1400
@@ -46,7 +46,7 @@ def main() -> int:
 
     files = sorted(
         f for f in os.listdir(SRC)
-        if f.lower().endswith((".jpg", ".jpeg", ".png")) and f not in SKIP
+        if f.lower().endswith((".webp", ".jpg", ".jpeg", ".png")) and f not in SKIP
     )
     if not files:
         print("Khong co anh nao trong", SRC)

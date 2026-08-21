@@ -47,7 +47,7 @@ Tên sản phẩm hiện tại là **tên tạm**, sửa thoải mái. Mỗi s�
   "id": "mk-01",
   "name": "Thỏ Mơ Váy Nâu",
   "desc": "Thỏ nhỏ mặc váy nâu, kèm dây đeo tết tay",
-  "image": "/images/mockhoa-01-tho-vay-nau-day-deo.jpg"
+  "image": "/images/mockhoa-01-tho-vay-nau-day-deo.webp"
 }
 ```
 
@@ -56,15 +56,18 @@ Chỉ sửa `name` và `desc`. **Giữ nguyên `id` và `image`.**
 ### 3. Thêm sản phẩm mới
 
 1. Chép ảnh vào `public/images/`
-2. Đặt tên theo kiểu `danhmuc-số-mô-tả.jpg`, ví dụ `mockhoa-18-gau-ao-len.jpg`
-3. Mở `data/products.json`, thêm một khối mới vào đúng danh mục:
+2. Đặt tên theo kiểu `danhmuc-số-mô-tả`, ví dụ `mockhoa-18-gau-ao-len.jpg`
+3. Chạy `npm run webp` — ảnh JPG/PNG đổi sang `.webp` (nhẹ hơn ~50%), bản gốc
+   được xoá đi. Ảnh chụp điện thoại cứ thả vào rồi chạy lệnh này là xong.
+4. Mở `data/products.json`, thêm một khối mới vào đúng danh mục — nhớ để đuôi
+   `.webp`:
 
 ```json
 {
   "id": "mk-18",
   "name": "Tên sản phẩm",
   "desc": "Mô tả ngắn",
-  "image": "/images/mockhoa-18-gau-ao-len.jpg"
+  "image": "/images/mockhoa-18-gau-ao-len.webp"
 }
 ```
 
@@ -146,9 +149,10 @@ có ảnh thì hiện khung nét đứt nhắc tên file cần đặt.
 ### Thêm banner
 
 1. Tạo ảnh **1920×1080 (tỉ lệ 16:9)**
-2. Đặt tên đúng theo slug danh mục: `moc-khoa.jpg`, `thu-bong.jpg`,
-   `tui-vi.jpg`, `quan-ao.jpg`, `phu-kien.jpg`, `hoa-qua-tang.jpg`
+2. Đặt tên đúng theo slug danh mục: `moc-khoa`, `thu-bong`, `tui-vi`,
+   `quan-ao`, `phu-kien`, `hoa-qua-tang`
 3. Thả vào `public/banners/`
+4. Chạy `npm run webp` để đổi sang `.webp` — trang chỉ đọc file `.webp`
 
 Banner tự hiện, không phải sửa code. Chưa đủ 6 cái cũng không sao — cái nào có
 ảnh thì hiện ảnh, cái nào chưa thì vẫn là khung trống.
@@ -176,6 +180,26 @@ npm run tach-nen
 > Toàn bộ xử lý chạy trên máy, ảnh không gửi đi đâu cả.
 
 ---
+
+## Ảnh trên web đều là WebP
+
+Toàn bộ ảnh trong `public/` là định dạng **WebP** — nhẹ hơn JPG khoảng 50% mà
+mắt thường không thấy khác. Cả thư mục ảnh giảm từ 24.7 MB xuống 11.6 MB, trang
+tải nhanh hơn hẳn trên 4G. Trình duyệt nào từ 2020 trở đi cũng đọc được.
+
+Thêm ảnh mới không cần tự đổi định dạng — cứ thả file JPG/PNG vào
+`public/images/` hoặc `public/banners/` rồi chạy:
+
+```bash
+npm run webp
+```
+
+Lệnh này quét hai thư mục đó, đổi mọi ảnh JPG/PNG sang `.webp` rồi xoá bản gốc.
+Ảnh nào đã có `.webp` cùng tên thì bỏ qua. Muốn giữ lại bản gốc thì thêm
+`--giu-goc`, muốn xem trước mà chưa đổi thật thì thêm `--thu`.
+
+Riêng `app/icon.png` và `app/apple-icon.png` giữ nguyên PNG — đó là file quy ước
+của Next.js để làm favicon, không nhận định dạng WebP.
 
 ## Đưa web lên mạng
 

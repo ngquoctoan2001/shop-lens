@@ -25,7 +25,7 @@ export const bannerSlots: BannerSlot[] = categories.map((c) => ({
   slug: c.slug,
   name: c.name,
   count: c.count,
-  image: `/banners/${c.slug}.jpg`,
+  image: `/banners/${c.slug}.webp`,
 }));
 
 /**

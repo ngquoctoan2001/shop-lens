@@ -59,7 +59,7 @@ Mỗi phần có: tên file cần lưu → ảnh cần tải lên → prompt đ�
 
 ## 1. Móc khóa & Charm
 
-**Lưu thành:** `public/banners/moc-khoa.jpg`
+**Lưu thành:** `public/banners/moc-khoa.jpg` (rồi chạy `npm run webp` để đổi sang `.webp`)
 
 **Tải lên 5 ảnh này** (trong `public/cutouts/`):
 
@@ -110,7 +110,7 @@ Tổng thể sáng sủa, thoáng, nhiều khoảng trống, cảm giác dịu d
 
 ## 2. Thú bông Amigurumi
 
-**Lưu thành:** `public/banners/thu-bong.jpg`
+**Lưu thành:** `public/banners/thu-bong.jpg` (rồi chạy `npm run webp` để đổi sang `.webp`)
 
 **Tải lên 5 ảnh này:**
 
@@ -161,7 +161,7 @@ Tổng thể sáng sủa, thoáng, nhiều khoảng trống, cảm giác ấm á
 
 ## 3. Túi & Ví
 
-**Lưu thành:** `public/banners/tui-vi.jpg`
+**Lưu thành:** `public/banners/tui-vi.jpg` (rồi chạy `npm run webp` để đổi sang `.webp`)
 
 **Tải lên 5 ảnh này:**
 
@@ -212,7 +212,7 @@ Tổng thể sáng sủa, thoáng, nhiều khoảng trống, cảm giác mộc m
 
 ## 4. Quần áo
 
-**Lưu thành:** `public/banners/quan-ao.jpg`
+**Lưu thành:** `public/banners/quan-ao.jpg` (rồi chạy `npm run webp` để đổi sang `.webp`)
 
 **Tải lên cả 3 ảnh:**
 
@@ -262,7 +262,7 @@ Tổng thể sáng sủa, thoáng, nhiều khoảng trống, cảm giác nhẹ n
 
 ## 5. Phụ kiện
 
-**Lưu thành:** `public/banners/phu-kien.jpg`
+**Lưu thành:** `public/banners/phu-kien.jpg` (rồi chạy `npm run webp` để đổi sang `.webp`)
 
 **Tải lên 5 ảnh này:**
 
@@ -314,7 +314,7 @@ Tổng thể sáng sủa, thoáng, nhiều khoảng trống, cảm giác tươi 
 
 ## 6. Hoa len & Quà tặng
 
-**Lưu thành:** `public/banners/hoa-qua-tang.jpg`
+**Lưu thành:** `public/banners/hoa-qua-tang.jpg` (rồi chạy `npm run webp` để đổi sang `.webp`)
 
 **Tải lên 5 ảnh này:**
 
@@ -381,10 +381,11 @@ Vài câu nhắc thêm, dán tiếp sau khi nó trả ảnh:
 
 ## Xong rồi thì
 
-1. Đổi tên 6 file cho đúng: `moc-khoa.jpg`, `thu-bong.jpg`, `tui-vi.jpg`,
-   `quan-ao.jpg`, `phu-kien.jpg`, `hoa-qua-tang.jpg`
+1. Đổi tên 6 file cho đúng: `moc-khoa`, `thu-bong`, `tui-vi`, `quan-ao`,
+   `phu-kien`, `hoa-qua-tang` (đuôi gì cũng được, JPG hay PNG đều xong)
 2. Bỏ hết vào `public/banners/`
-3. Chạy `npm run dev` rồi mở trang chủ — banner tự hiện thay khung trống
+3. Chạy `npm run webp` — ảnh đổi sang `.webp` cho nhẹ, trang chỉ đọc `.webp`
+4. Chạy `npm run dev` rồi mở trang chủ — banner tự hiện thay khung trống
 
 Chưa làm đủ 6 cái cũng không sao: cái nào có ảnh thì hiện ảnh, cái nào chưa thì
 vẫn là khung trống, web vẫn chạy bình thường.

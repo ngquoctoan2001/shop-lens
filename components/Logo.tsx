@@ -3,7 +3,7 @@ import Link from "next/link";
 import { site } from "@/site.config";
 
 /**
- * Logo shop. Ảnh nằm ở public/images/logo-mark.png — muốn đổi logo khác thì
+ * Logo shop. Ảnh nằm ở public/images/logo-mark.webp — muốn đổi logo khác thì
  * thay đúng file đó (ảnh vuông), không cần sửa gì trong code này.
  *
  * `priority` chỉ bật ở header vì đó là chỗ hiện ngay khi mở trang; footer nằm
@@ -23,7 +23,7 @@ export default function Logo({
       aria-label={`${site.name} — về trang chủ`}
     >
       <Image
-        src="/images/logo-mark.png"
+        src="/images/logo-mark.webp"
         alt=""
         width={80}
         height={80}

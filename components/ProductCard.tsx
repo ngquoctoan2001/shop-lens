@@ -14,14 +14,24 @@ export default function ProductCard({ product, onOpen, eager }: Props) {
     // Lưới kéo <article> cao bằng ô cao nhất trong hàng, nhưng cái nút bên
     // trong thì không tự cao theo. Cho <article> thành flex để nút được kéo
     // giãn đầy — nhờ vậy các thẻ cùng hàng mới bằng nhau.
-    <article className="group relative flex">
+    // hover:z-10: thẻ phóng to lên 1.03 sẽ tràn qua thẻ bên cạnh, không nâng
+    // z-index thì mép nó chui xuống dưới thẻ đứng sau trong lưới.
+    <article className="group relative flex hover:z-10">
       <button
         type="button"
         onClick={onOpen}
         aria-label={`Xem ảnh lớn: ${product.name}`}
         // Viền mảnh 1px + bóng mềm, thay cho viền 2px dày cộm trước đây:
         // trên nền kem đậm thì viền dày chỉ làm thẻ trông như bị đóng khung.
-        className="relative flex w-full flex-col overflow-hidden rounded-[24px] border border-border/80 bg-card text-left shadow-[var(--shadow-s)] transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1.5 hover:border-accent/60 hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
+        // Mảnh thì mảnh nhưng phải có màu: --card-line ngả đào, đủ tách mép
+        // thẻ khỏi nền kem. Hover đẩy hẳn lên accent nguyên độ — để accent/60
+        // như cũ thì nó sáng ngang viền lúc nghỉ, rê chuột vào như không đổi.
+        // Rê chuột thì thẻ phóng to tại chỗ (scale) thay vì nhấc lên xuống —
+        // cả lưới đứng yên, mắt không bị giật theo từng thẻ nảy lên.
+        // transition phải kê ĐÍCH DANH `scale`: Tailwind v4 dịch scale-[1.03]
+        // ra thuộc tính `scale` riêng chứ không gói vào `transform` nữa. Danh
+        // sách cũ chỉ có transform nên hover là thẻ nhảy cái rụp, không mượt.
+        className="stitch relative flex w-full flex-col overflow-hidden rounded-[24px] border border-card-line bg-card text-left shadow-[var(--shadow-s)] transition-[scale,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-[1.03] hover:border-accent hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
       >
         <div className="relative aspect-square overflow-hidden bg-bg-alt">
           <Image
@@ -30,7 +40,10 @@ export default function ProductCard({ product, onOpen, eager }: Props) {
             fill
             loading={eager ? "eager" : "lazy"}
             sizes="(max-width: 520px) 45vw, (max-width: 1024px) 33vw, 280px"
-            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-[1.06]"
+            // Cả thẻ đã phóng 1.03 rồi, ảnh chỉ cần thêm một nhịp nhẹ nữa là
+            // đủ; để nguyên 1.06 như hồi thẻ đứng yên thì cộng dồn thành ~1.09,
+            // ảnh phình quá tay so với khung.
+            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-[1.04]"
           />
         </div>
 
@@ -42,7 +55,7 @@ export default function ProductCard({ product, onOpen, eager }: Props) {
               sạch hẳn, mà thứ tự đọc lại rõ — danh mục → tên → mô tả → hành
               động. Màu chữ lấy từ --cat-ink của chính danh mục đó. */}
           <span
-            className={`cat-eyebrow cat-${product.categorySlug} inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em]`}
+            className={`cat-eyebrow cat-${product.categorySlug} inline-flex items-center gap-1 font-extrabold uppercase sm:gap-1.5`}
           >
             {product.categoryName}
           </span>

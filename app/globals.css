@@ -11,6 +11,12 @@
   --ink: #43301f; /* chữ chính, nâu cacao         */
   --card: #ffffff; /* nền thẻ sản phẩm             */
   --border: #eadbc8; /* viền                         */
+  /* Viền riêng của thẻ sản phẩm, đào nhạt. Không xài chung --border được:
+     màu đó (#eadbc8) gần như trùng nền khu sản phẩm (--bg-alt #f5e9dc), thẻ
+     trắng đặt lên là mất luôn mép, nhìn như mấy tấm ảnh trôi nổi. Tông này
+     ngả hồng cùng họ với --accent nên lúc rê chuột viền đổi sang accent thấy
+     như đậm thêm một nấc, chứ không phải nhảy sang màu khác. */
+  --card-line: #e6c6b5;
   --accent: #e9a9a0; /* màu nhấn, hồng đào           */
   --accent-2: #d9a441; /* màu nhấn phụ, vàng mật       */
 
@@ -45,6 +51,7 @@
   --color-ink-soft: var(--ink-soft);
   --color-card: var(--card);
   --color-border: var(--border);
+  --color-card-line: var(--card-line);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
   --color-accent-3: var(--accent-3);
@@ -156,6 +163,31 @@ h4 {
   background-size: 100% 0.32em;
 }
 
+/* Đường khâu nét đứt hiện lên khi rê chuột vào thẻ sản phẩm.
+   Vẽ bằng ::after để khỏi phải thêm thẻ rỗng trong markup. Bán kính bo =
+   bo của thẻ trừ đi inset (24-9 và 30-9), có vậy đường khâu mới chạy song
+   song với mép thẻ chứ không bị cấn ở bốn góc. */
+.stitch::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 2px dashed var(--accent);
+  border-radius: 15px;
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+  z-index: 2;
+}
+@media (min-width: 640px) {
+  .stitch::after {
+    border-radius: 21px;
+  }
+}
+.group:hover .stitch::after,
+.stitch:focus-visible::after {
+  opacity: 0.5;
+}
+
 /* ==========================================================================
    MÀU NHÃN DANH MỤC — mỗi danh mục một tông pastel riêng
    Nhãn .cat-badge (dùng trong khung xem ảnh lớn) có nền ĐỤC, không dùng màu
@@ -170,6 +202,31 @@ h4 {
    của danh mục. Không nền không viền nên nhẹ hơn hẳn cái nhãn tròn cũ. */
 .cat-eyebrow {
   color: var(--cat-ink, var(--accent-3));
+  /* Cỡ chữ + giãn chữ để luôn ở đây, không rải ra className bên
+     ProductCard nữa: khối này nằm ngoài @layer nên nó luôn đè lên utility
+     của Tailwind, để hai nơi cùng khai báo thì chỉ tổ rối.
+
+     Trên điện thoại lưới có 2 cột nên ruột thẻ chỉ còn cỡ nửa bề ngang màn
+     hình trừ đi lề với padding — máy 375px thì được 133px. Tên danh mục dài
+     nhất, "THÚ BÔNG AMIGURUMI", viết hoa kèm tracking 0.14em ngốn tới 156px:
+     quá khổ, rớt xuống hai dòng làm chân các thẻ cùng hàng so le nhau. Nên:
+     khóa một dòng, siết tracking lại, và cho cỡ chữ co theo bề ngang màn
+     hình. 3.9vw - 4.9px là nghiệm của bất phương trình "bề rộng chữ + chấm
+     tròn 0.45em + khe hở 4px <= bề ngang ruột thẻ" — dựng từ số đo thật
+     trên trình duyệt ở hai mốc 320px và 375px, chừa sẵn ~3px dư cho sai số
+     làm tròn. Chặn trên 11px giữ nguyên cỡ chữ cũ cho máy to; chặn dưới
+     7.5px chỉ chạm tới ở máy còn hẹp hơn cả 320px. */
+  white-space: nowrap;
+  font-size: clamp(7.5px, 3.9vw - 4.9px, 11px);
+  letter-spacing: 0.04em;
+}
+/* Từ sm trở lên thẻ rộng rãi hẳn (>=250px ruột), trả lại cỡ chữ và độ giãn
+   nguyên bản của dòng dẫn. */
+@media (min-width: 640px) {
+  .cat-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
 }
 .cat-eyebrow::before {
   content: "";

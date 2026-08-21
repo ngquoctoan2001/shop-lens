@@ -51,18 +51,22 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     trongTam &&
     !giamChuyenDong;
 
-  /* --- Cuộn tới tấm thứ i, canh vào giữa khung --- */
+  /** Lề trái của khung cuộn. Dải banner trải sát mép nên hiện bằng 0 — đọc
+   *  từ CSS chứ không ghi cứng, sau này thụt vào lại thì khỏi sửa chỗ này. */
+  const leTrai = (track: HTMLElement) =>
+    parseFloat(getComputedStyle(track).paddingLeft) || 0;
+
+  /* --- Cuộn tới tấm thứ i, cho mép trái nó về sát lề trái khung ---
+     Không canh vào GIỮA khung cuộn được: khung rộng hết màn hình nên canh
+     giữa là banner nhảy lệch hẳn so với lúc đứng yên (màn 1920 lệch 302px). */
   const den = useCallback((i: number) => {
     const track = trackRef.current;
     const tam = track?.children[i] as HTMLElement | undefined;
     if (!track || !tam) return;
-    track.scrollTo({
-      left: tam.offsetLeft - (track.clientWidth - tam.offsetWidth) / 2,
-      behavior: "smooth",
-    });
+    track.scrollTo({ left: tam.offsetLeft - leTrai(track), behavior: "smooth" });
   }, []);
 
-  /* --- Đang xem tấm nào: lấy tấm có tâm gần tâm khung nhất --- */
+  /* --- Đang xem tấm nào: lấy tấm có mép trái gần chỗ đang cuộn nhất --- */
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -71,17 +75,19 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     const doLai = () => {
       cancelAnimationFrame(cho);
       cho = requestAnimationFrame(() => {
-        const tamKhung = track.scrollLeft + track.clientWidth / 2;
+        const le = leTrai(track);
         let gan = 0;
         let lechIt = Infinity;
+
         Array.from(track.children).forEach((con, i) => {
           const el = con as HTMLElement;
-          const lech = Math.abs(el.offsetLeft + el.offsetWidth / 2 - tamKhung);
+          const lech = Math.abs(el.offsetLeft - le - track.scrollLeft);
           if (lech < lechIt) {
             lechIt = lech;
             gan = i;
           }
         });
+
         indexRef.current = gan;
         setIndex(gan);
       });
@@ -99,7 +105,20 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
   useEffect(() => {
     if (!dangTuChay) return;
     const hen = setInterval(() => {
-      const ke = (indexRef.current + 1) % cards.length;
+      const track = trackRef.current;
+      if (!track) return;
+
+      const le = leTrai(track);
+      const cuoiDuong = track.scrollWidth - track.clientWidth;
+      const dich = (i: number) =>
+        Math.min((track.children[i] as HTMLElement).offsetLeft - le, cuoiDuong);
+
+      let ke = (indexRef.current + 1) % cards.length;
+      // Màn rộng xem được mấy tấm một lúc, nên mấy tấm cuối lùi không hết cỡ
+      // về lề được — chỗ dừng của chúng trùng nhau. Cứ đổi tiếp thì banner
+      // đứng im nguyên một nhịp 5 giây. Gặp vậy thì quay luôn về tấm đầu.
+      if (ke !== 0 && Math.abs(dich(ke) - track.scrollLeft) < 8) ke = 0;
+
       // Ghi số thứ tự ngay tại đây chứ không đợi sự kiện cuộn báo về. Đợi thì
       // nhịp sau vẫn thấy số cũ và nhắm lại đúng tấm vừa rồi — banner đứng ì
       // một chỗ. Người xem tự lướt thì sự kiện cuộn sẽ chỉnh lại cho khớp.
@@ -205,14 +224,14 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
         onPointerCancel={thoiLuot}
         onClickCapture={chanBamNham}
         onDragStart={(e) => e.preventDefault()}
-        className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto px-[max(0.875rem,calc((100vw-1180px)/2))] pb-4 active:cursor-grabbing sm:gap-5"
+        className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto pb-4 active:cursor-grabbing sm:gap-5"
       >
         {cards.map((c, i) => (
           <a
             key={c.slug}
             href={`#san-pham=${c.slug}`}
             aria-label={`Xem nhóm ${c.name} — ${c.count} mẫu`}
-            className="group relative w-[78vw] shrink-0 snap-center overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:rounded-[32px] lg:w-[42vw] xl:w-[560px]"
+            className="group relative w-[78vw] shrink-0 snap-start overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:rounded-[32px] lg:w-[42vw]"
             style={{ aspectRatio: BANNER_RATIO }}
           >
             {c.coAnh ? (
