@@ -47,12 +47,14 @@ export default function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 backdrop-blur-xl transition-[border-color,box-shadow] duration-250 ${
+      // Nền lấy từ lớp .nen-header trong globals.css chứ không đặt inline:
+      // ở đó mới kê được dòng dự phòng cho Safari cũ (một object style trong
+      // JS không chứa nổi hai khoá "background").
+      className={`nen-header sticky top-0 z-50 backdrop-blur-xl transition-[border-color,box-shadow] duration-250 ${
         stuck
           ? "border-b border-border shadow-[var(--shadow-header)]"
           : "border-b border-transparent"
       }`}
-      style={{ background: "color-mix(in srgb, var(--bg) 82%, transparent)" }}
     >
       {/* Chiều cao lấy từ --cao-header trong globals.css chứ không ghi thẳng
           74px ở đây: chỗ nhảy tới mục menu (.neo-muc) và chỗ dò mục đang xem

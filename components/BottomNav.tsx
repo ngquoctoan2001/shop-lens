@@ -32,9 +32,10 @@ export default function BottomNav() {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 md:hidden">
       <nav
         aria-label="Điều hướng nhanh"
-        className="pointer-events-auto mx-auto flex w-[min(100%-1.5rem,420px)] gap-1 rounded-[26px] border-2 border-border p-1.5 shadow-[var(--shadow-l)] backdrop-blur-xl"
+        // Nền lấy từ lớp .nen-thanh-duoi trong globals.css — xem chú thích ở
+        // đó về dòng dự phòng cho Safari cũ.
+        className="nen-thanh-duoi pointer-events-auto mx-auto flex w-[min(100%-1.5rem,420px)] gap-1 rounded-[26px] border-2 border-border p-1.5 shadow-[var(--shadow-l)] backdrop-blur-xl"
         style={{
-          background: "color-mix(in srgb, var(--bg) 86%, transparent)",
           // Chừa chỗ cho thanh vuốt của iPhone; máy không có thì lấy 12px
           marginBottom: "max(12px, env(safe-area-inset-bottom))",
         }}

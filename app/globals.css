@@ -188,6 +188,50 @@ h4 {
   background-size: 100% 0.32em;
 }
 
+/* ============ NỀN KÍNH MỜ CHO HEADER VÀ THANH DƯỚI ============
+   Hai dòng background chồng lên nhau là CỐ Ý, không phải thừa: dòng trên là
+   bản đặc dự phòng, dòng dưới mới là bản trong mờ thật. Trình duyệt nào hiểu
+   color-mix() thì lấy dòng dưới đè lên, không hiểu thì bỏ qua dòng đó và giữ
+   lại dòng trên.
+
+   Vì sao cần: color-mix() chỉ có từ Safari 16.2. Máy cũ hơn mà không có dòng
+   dự phòng thì cả khai báo bị vứt, thanh mất sạch nền — nội dung trang cuộn
+   phía dưới trồi hết lên, chữ chồng chữ không đọc nổi.
+
+   Hai lớp riêng vì độ mờ khác nhau: header nhạt hơn cho thấy trang phía sau,
+   thanh dưới đậm hơn vì nó nổi hẳn trên nội dung. */
+.nen-header {
+  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+}
+.nen-thanh-duoi {
+  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+}
+
+/* ================= KHUNG GIỮ TỈ LỆ =================
+   Cho khung một chiều cao ăn theo bề ngang của chính nó — mặc định là ô vuông,
+   đổi tỉ lệ bằng biến --ti-le (vd 56.25% cho khung 16:9).
+
+   VÌ SAO KHÔNG DÙNG aspect-ratio: mấy khung xài lớp này (ô ảnh thẻ sản phẩm,
+   cụm ảnh đầu trang, banner, ảnh lớn trong popup) đều có ruột toàn phần tử
+   position:absolute — không có gì trong dòng chảy đẩy khung cao lên. Safari
+   trên iPhone dưới iOS 16.4 gặp cảnh đó thì tính aspect-ratio ra 0: ảnh mất
+   sạch, thẻ sản phẩm co lại còn mỗi phần chữ. Đúng lỗi khách đã báo.
+
+   Mẹo cũ mà chắc: padding tính theo phần trăm thì LUÔN ăn theo bề ngang, nên
+   padding-top:100% ra đúng hình vuông. Trình duyệt đời nào cũng tính đúng.
+
+   Dùng ::before chứ không đặt padding thẳng lên khung: padding phần trăm ăn
+   theo bề ngang của THẺ CHA. Khung nào hẹp hơn cha (banner, hay cụm ảnh đầu
+   trang bị max-width chặn lại) mà đặt thẳng là cao vống lên — banner từng ra
+   211px thay vì 193px. ::before nằm bên trong nên đo đúng bề ngang của khung. */
+.khung-ti-le::before {
+  content: "";
+  display: block;
+  padding-top: var(--ti-le, 100%);
+}
+
 /* Đường khâu nét đứt hiện lên khi rê chuột vào thẻ sản phẩm.
    Vẽ bằng ::after để khỏi phải thêm thẻ rỗng trong markup. Bán kính bo =
    bo của thẻ trừ đi inset (24-9 và 30-9), có vậy đường khâu mới chạy song
@@ -344,13 +388,17 @@ h4 {
 }
 
 .marquee-band {
+  /* Dòng dự phòng cho Safari dưới 16.2 — xem chú thích ở .nen-header */
+  background: var(--bg-alt);
   background: linear-gradient(
     180deg,
     color-mix(in srgb, var(--accent) 15%, var(--bg)),
     color-mix(in srgb, var(--accent-2) 13%, var(--bg))
   );
-  border-top: 2px dashed color-mix(in srgb, var(--accent) 60%, var(--bg));
-  border-bottom: 2px dashed color-mix(in srgb, var(--accent) 60%, var(--bg));
+  border-top: 2px dashed var(--border);
+  border-bottom: 2px dashed var(--border);
+  border-top-color: color-mix(in srgb, var(--accent) 60%, var(--bg));
+  border-bottom-color: color-mix(in srgb, var(--accent) 60%, var(--bg));
 }
 
 /* Rê chuột vào thì dừng lại cho kịp đọc */

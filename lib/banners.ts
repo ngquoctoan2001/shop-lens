@@ -58,9 +58,17 @@ export const bannerSlots: BannerSlot[] = categories.map((c) => ({
 }));
 
 /**
- * Tỉ lệ khung banner: 16:9.
+ * Tỉ lệ khung banner: 16:9 — nhưng ghi dưới dạng phần trăm chiều cao so với
+ * bề ngang (9 ÷ 16 = 56.25%), vì khung banner dựng chiều cao bằng miếng chêm
+ * padding-top chứ không dùng aspect-ratio.
  *
  * Chọn 16:9 vì đây là tỉ lệ ngang rộng nhất mà hầu hết công cụ tạo ảnh bằng AI
  * đều hỗ trợ sẵn (ChatGPT, Gemini, Canva). Ảnh gốc nên là 1920×1080.
+ *
+ * VÌ SAO KHÔNG PHẢI aspect-ratio: ruột khung banner toàn phần tử absolute
+ * (ảnh, vệt sáng, cụm chữ), không có gì trong dòng chảy đẩy khung cao lên.
+ * Safari trên iPhone đời cũ gặp cảnh đó thì tính aspect-ratio ra 0 và cả dải
+ * banner biến mất. padding phần trăm thì trình duyệt nào cũng tính đúng.
+ * Cùng một cách vá với ProductCard, Hero và Lightbox.
  */
-export const BANNER_RATIO = "16 / 9";
+export const BANNER_RATIO = "56.25%";

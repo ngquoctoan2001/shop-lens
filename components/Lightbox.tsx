@@ -220,7 +220,10 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
               Ảnh sản phẩm có tấm vuông tấm dọc, nên dùng object-contain để lúc
               nào cũng thấy trọn con vật; chỗ trống hai bên lấp bằng chính tấm
               ảnh đó phóng to làm mờ, nhìn mềm hơn là để viền trắng trơ. */}
-          <div className="relative mx-auto aspect-square w-full max-w-[min(33svh,320px)] overflow-hidden rounded-[22px] bg-bg-alt shadow-[var(--shadow-m)] ring-[3px] ring-white md:absolute md:left-6 md:right-6 md:top-1/2 md:max-h-[calc(100%-3rem)] md:w-auto md:max-w-none md:-translate-y-1/2 md:rounded-[26px]">
+          {/* .khung-ti-le: ô vuông không cần aspect-ratio — xem globals.css.
+              Ruột khung là hai tấm ảnh absolute (bản mờ làm nền + ảnh chính)
+              nên cũng thuộc diện Safari cũ tính hụt chiều cao. */}
+          <div className="khung-ti-le relative mx-auto w-full max-w-[min(33svh,320px)] overflow-hidden rounded-[22px] bg-bg-alt shadow-[var(--shadow-m)] ring-[3px] ring-white md:absolute md:left-6 md:right-6 md:top-1/2 md:max-h-[calc(100%-3rem)] md:w-auto md:max-w-none md:-translate-y-1/2 md:rounded-[26px]">
             <Image
               key={`nen-${product.imageMini}`}
               /* Bản mini 96px: đằng nào cũng làm mờ tịt nên bé tí là đủ.

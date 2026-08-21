@@ -15,8 +15,8 @@
         },
         {
           "id": "mk-02",
-          "name": "Gấu Khớp Nối",
-          "desc": "Gấu nâu tay chân xoay được, khoen sao bạc",
+          "name": "Gấu Teddy Khớp Nối",
+          "desc": "Teddy nâu tay chân xoay được, bàn chân kem, khoen sao bạc",
           "image": "/images/mockhoa-02-gau-nau-khop-noi.webp"
         },
         {
@@ -51,14 +51,14 @@
         },
         {
           "id": "mk-08",
-          "name": "Cặp Cún Đốm",
-          "desc": "Đôi cún trắng tai đen, một bạn ôm tim",
+          "name": "Cặp Cún Snoopy",
+          "desc": "Đôi cún tai đen vòng cổ đỏ, một bạn ôm tim, một bạn cột nơ",
           "image": "/images/mockhoa-08-cho-doi-snoopy.webp"
         },
         {
           "id": "mk-09",
-          "name": "Gấu Váy Vàng",
-          "desc": "Gấu nhỏ diện váy vàng đen, cột tóc đuôi gà",
+          "name": "Gấu Cử Nhân",
+          "desc": "Gấu mặc áo tốt nghiệp, mũ tua vàng - quà mừng ra trường",
           "image": "/images/mockhoa-09-gau-vay-vang-den.webp"
         },
         {
@@ -69,8 +69,8 @@
         },
         {
           "id": "mk-11",
-          "name": "Đôi Mèo Mun & Mướp",
-          "desc": "Cặp mèo trắng - đen kèm charm đá tự nhiên",
+          "name": "Mèo Đội Mũ Cá Taiyaki",
+          "desc": "Cặp mèo trắng - đen trùm mũ bánh cá, charm sao và đá tự nhiên",
           "image": "/images/mockhoa-11-meo-doi-trang-den.webp"
         },
         {
@@ -93,8 +93,8 @@
         },
         {
           "id": "mk-15",
-          "name": "Chuột & Tulip",
-          "desc": "Set chuột xám, bạn xanh mini và hoa tulip cười",
+          "name": "Heo Xám & Tulip",
+          "desc": "Set heo xám mũi hồng, bạn xanh mini và hoa tulip cười",
           "image": "/images/mockhoa-15-chuot-xam-va-hoa-tulip.webp"
         },
         {
@@ -119,8 +119,8 @@
       "products": [
         {
           "id": "tb-01",
-          "name": "Cún Mặt Buồn",
-          "desc": "Cún kem má hồng, mặt buồn thiu dễ thương",
+          "name": "Cún Nghiêng Đầu",
+          "desc": "Cún kem mõm dài, nghiêng đầu ngơ ngác, má ửng hồng",
           "image": "/images/thubong-01-cho-kem-mat-buon.webp"
         },
         {
@@ -155,8 +155,8 @@
         },
         {
           "id": "tb-07",
-          "name": "Thỏ Đen Váy Tím",
-          "desc": "Bạn thỏ đen mũ sừng, váy xù tím",
+          "name": "Thỏ Kuromi",
+          "desc": "Thỏ đen mũ sừng đính sọ hồng, váy xù tím, nơ tím hai bên",
           "image": "/images/thubong-07-tho-den-vay-tim.webp"
         },
         {
@@ -178,15 +178,9 @@
           "image": "/images/thubong-10-ech-doi-vay-hong-yem-xanh.webp"
         },
         {
-          "id": "tb-11",
-          "name": "Ếch Lười",
-          "desc": "Ếch xanh nằm ngửa lười biếng, mặt ngơ",
-          "image": "/images/thubong-11-ech-xanh-nam-ngua.webp"
-        },
-        {
           "id": "tb-12",
-          "name": "Bạn Xanh Môi Hồng",
-          "desc": "Bạn nhỏ mắt to môi dày, mũ lông nâu, mặt lầy",
+          "name": "Cá Hề Đội Mũ Capybara",
+          "desc": "Cá hề xanh môi dày, trùm mũ capybara nâu, đeo túi chéo đỏ",
           "image": "/images/thubong-12-quai-vat-xanh-moi-hong.webp"
         },
         {
@@ -241,8 +235,8 @@
         },
         {
           "id": "tv-06",
-          "name": "Ví Mini Dâu",
-          "desc": "Ví nhỏ đỏ hình quả dâu, kèm charm dâu",
+          "name": "Ví Cầm Tay Cà Chua",
+          "desc": "Ví nắp gập đỏ hình cà chua, cuống lá xanh, kèm charm cà chua",
           "image": "/images/tuivi-06-vi-mini-dau-tay-do.webp"
         },
         {
@@ -287,8 +281,8 @@
       "products": [
         {
           "id": "pk-01",
-          "name": "Mũ Beret Quả Cam",
-          "desc": "Beret cam tạo hình quả cam, kèm charm quýt",
+          "name": "BST Quả Cam",
+          "desc": "Beret hình quả cam, kèm khay 4 quả mini và charm cam rời",
           "image": "/images/phukien-01-mu-beret-qua-cam.webp"
         },
         {
@@ -327,7 +321,7 @@
       "slug": "hoa-qua-tang",
       "name": "Hoa len & Quà tặng",
       "emoji": "💐",
-      "desc": "Bó hoa không héo, chậu cây để bàn, quà kỷ niệm",
+      "desc": "Bó hoa không héo, chậu cây và đồ nhỏ để bàn, quà kỷ niệm",
       "products": [
         {
           "id": "hq-01",
@@ -370,6 +364,12 @@
           "name": "Doll Cô Dâu Chú Rể",
           "desc": "Cặp doll cưới trong hộp mica, quà kỷ niệm",
           "image": "/images/hoaqua-07-doll-co-dau-chu-re-hop-mica.webp"
+        },
+        {
+          "id": "hq-08",
+          "name": "Lót Ly Thằn Lằn Xanh",
+          "desc": "Thằn lằn xanh nằm dang chân, thân tròn dẹt kê vừa đáy ly",
+          "image": "/images/thubong-11-ech-xanh-nam-ngua.webp"
         }
       ]
     }

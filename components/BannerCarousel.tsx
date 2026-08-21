@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { BANNER_RATIO } from "@/lib/banners";
 import { chonDanhMuc } from "@/lib/category";
@@ -493,8 +493,10 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
               // hết bề ngang (chừa 16px mỗi bên làm lề) và snap-center để nó
               // dừng ngay chính giữa. Từ sm trở lên màn rộng rãi, quay lại
               // kiểu cũ — xếp mấy tấm cạnh nhau, căn mép trái.
-              className="group relative w-[calc(100vw-2rem)] shrink-0 snap-center overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:snap-start sm:rounded-[32px] lg:w-[42vw]"
-              style={{ aspectRatio: BANNER_RATIO }}
+              className="khung-ti-le group relative w-[calc(100vw-2rem)] shrink-0 snap-center overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:snap-start sm:rounded-[32px] lg:w-[42vw]"
+              // Khung 16:9 dựng bằng .khung-ti-le (xem app/globals.css) chứ
+              // không phải aspect-ratio — lý do ghi ở BANNER_RATIO.
+              style={{ "--ti-le": BANNER_RATIO } as CSSProperties}
             >
               {c.coAnh ? (
                 <>
@@ -559,7 +561,10 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
                 </>
               ) : (
                 /* --- Khung trống chờ thả ảnh vào --- */
-                <div className="flex h-full flex-col items-center justify-center gap-2 border-[3px] border-dashed border-border bg-bg-alt p-5 text-center">
+                /* absolute inset-0 chứ không phải h-full: khung cha lấy chiều
+                   cao từ padding-top, nên "cao 100%" ở đây sẽ ra 0. Trải kín
+                   khung bằng inset-0 thì đúng trong mọi trường hợp. */
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 border-[3px] border-dashed border-border bg-bg-alt p-5 text-center">
                   <span className="rounded-full border-2 border-dashed border-accent bg-card px-3.5 py-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.14em] text-accent-3">
                     Chưa có ảnh
                   </span>

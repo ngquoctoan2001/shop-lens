@@ -34,7 +34,10 @@ export default function ProductCard({ product, onOpen, className = "" }: Props) 
         // sách cũ chỉ có transform nên hover là thẻ nhảy cái rụp, không mượt.
         className="stitch relative flex w-full flex-col overflow-hidden rounded-[24px] border border-card-line bg-card text-left shadow-[var(--shadow-s)] transition-[scale,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-[1.03] hover:border-accent hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
       >
-        <div className="relative aspect-square overflow-hidden bg-bg-alt">
+        {/* Ô ảnh vuông. Giữ vuông bằng .khung-ti-le chứ không phải
+            aspect-square — luật và lý do nằm ở app/globals.css. Ba chỗ khác
+            cũng vá y hệt: Hero, BannerCarousel, Lightbox. */}
+        <div className="khung-ti-le relative overflow-hidden bg-bg-alt">
           {/* Dùng bản thumb 500px chứ KHÔNG phải ảnh gốc. Ô này rộng 165px
               trên điện thoại, 274px trên máy tính — 500px là đã dư cho cả màn
               hình nét cao. Trang xuất ra web tĩnh nên <Image> không tự thu nhỏ

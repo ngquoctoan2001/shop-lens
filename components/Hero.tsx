@@ -36,7 +36,11 @@ export default function Hero() {
 
       <div className="relative z-10 mx-auto grid w-[min(100%-2.5rem,1180px)] items-center gap-9 md:grid-cols-[1.05fr_0.95fr] md:gap-10">
         {/* --- Ảnh: cho lên trước trên điện thoại, sang phải trên máy tính --- */}
-        <div className="relative order-first mx-auto aspect-square w-full max-w-[400px] md:order-last md:max-w-[480px]">
+        {/* .khung-ti-le giữ khung vuông thay cho aspect-square — xem
+            app/globals.css. Cụm này còn dễ sập hơn thẻ sản phẩm: mảng nền,
+            dòng chữ "made with love" và cả ba tấm ảnh lơ lửng đều absolute,
+            khung mà mất chiều cao là màn hình đầu tiên trắng trơn. */}
+        <div className="khung-ti-le relative order-first mx-auto w-full max-w-[400px] md:order-last md:max-w-[480px]">
           <div
             aria-hidden="true"
             className="absolute inset-[8%] bg-bg-alt shadow-[inset_0_0_0_2px_var(--border)]"
