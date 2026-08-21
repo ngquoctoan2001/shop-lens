@@ -276,6 +276,21 @@ h4 {
   );
 }
 
+/* Vạch chạy trong chấm đang xem của dải banner — cho biết chừng nào đổi tấm.
+   Đặt 4.6s thay vì đúng 5s để vạch đầy trước một nhịp rồi mới sang tấm mới,
+   nhìn có chủ đích hơn là đang chạy dở thì bị cắt ngang. */
+@keyframes banner-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+.banner-progress {
+  animation: banner-progress 4.6s linear forwards;
+}
+
 /* Ảnh sản phẩm lơ lửng ở đầu trang */
 @keyframes bob {
   0%,

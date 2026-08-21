@@ -223,3 +223,32 @@ export function TruckIcon({ className = "size-5" }: IconProps) {
     </svg>
   );
 }
+
+/** Tạm dừng — dùng cho nút bật/tắt tự chạy của dải banner */
+export function PauseIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      fill="currentColor"
+    >
+      <rect x="6.5" y="5" width="3.6" height="14" rx="1.6" />
+      <rect x="13.9" y="5" width="3.6" height="14" rx="1.6" />
+    </svg>
+  );
+}
+
+/** Chạy tiếp */
+export function PlayIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      fill="currentColor"
+    >
+      <path d="M8.4 5.2a1.3 1.3 0 0 1 1.98-1.11l8.1 5.05a2.2 2.2 0 0 1 0 3.73l-8.1 5.05A1.3 1.3 0 0 1 8.4 16.8Z" />
+    </svg>
+  );
+}
