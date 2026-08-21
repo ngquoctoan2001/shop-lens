@@ -5,11 +5,9 @@ import { ArrowRightIcon } from "./Icons";
 type Props = {
   product: Product;
   onOpen: () => void;
-  /** 8 ảnh đầu tải ngay, còn lại tải khi cuộn tới */
-  eager?: boolean;
 };
 
-export default function ProductCard({ product, onOpen, eager }: Props) {
+export default function ProductCard({ product, onOpen }: Props) {
   return (
     // Lưới kéo <article> cao bằng ô cao nhất trong hàng, nhưng cái nút bên
     // trong thì không tự cao theo. Cho <article> thành flex để nút được kéo
@@ -34,11 +32,18 @@ export default function ProductCard({ product, onOpen, eager }: Props) {
         className="stitch relative flex w-full flex-col overflow-hidden rounded-[24px] border border-card-line bg-card text-left shadow-[var(--shadow-s)] transition-[scale,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-[1.03] hover:border-accent hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
       >
         <div className="relative aspect-square overflow-hidden bg-bg-alt">
+          {/* Dùng bản thumb 500px chứ KHÔNG phải ảnh gốc. Ô này rộng 165px
+              trên điện thoại, 274px trên máy tính — 500px là đã dư cho cả màn
+              hình nét cao. Trang xuất ra web tĩnh nên <Image> không tự thu nhỏ
+              được, phải tự trỏ đúng cỡ (xem lib/products.ts).
+              Để "lazy" hết: khu sản phẩm nằm dưới màn hình đầu chừng 1400px,
+              tải sẵn chỉ giành băng thông với ảnh đầu trang mà người xem còn
+              chưa cuộn tới. */}
           <Image
-            src={product.image}
+            src={product.imageThumb}
             alt={product.name}
             fill
-            loading={eager ? "eager" : "lazy"}
+            loading="lazy"
             sizes="(max-width: 520px) 45vw, (max-width: 1024px) 33vw, 280px"
             // Cả thẻ đã phóng 1.03 rồi, ảnh chỉ cần thêm một nhịp nhẹ nữa là
             // đủ; để nguyên 1.06 như hồi thẻ đứng yên thì cộng dồn thành ~1.09,

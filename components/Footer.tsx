@@ -1,5 +1,6 @@
 import { fbLink, site, zaloDisplay, zaloLink } from "@/site.config";
 import Logo from "./Logo";
+import CurrentYear from "./CurrentYear";
 import { FlowerIcon } from "./Icons";
 
 /**
@@ -14,7 +15,10 @@ const LINK =
   "inline-flex min-h-11 items-center rounded-full px-3 text-[14.5px] font-semibold text-ink-soft transition-colors hover:bg-bg-alt hover:text-ink";
 
 export default function Footer() {
-  const year = new Date().getFullYear();
+  // Năm lúc build. Trên web tĩnh con số này đông cứng trong file HTML, nên
+  // CurrentYear sẽ lấy năm thật của máy khách ghi đè lên — xem chú thích
+  // trong components/CurrentYear.tsx.
+  const namBuild = new Date().getFullYear();
 
   return (
     <footer className="mt-14 border-t-2 border-border pb-7 pt-8 md:mt-16">
@@ -58,7 +62,7 @@ export default function Footer() {
         </div>
 
         <p className="mt-6 flex items-center justify-center gap-1.5 border-t border-border pt-5 text-[13px] font-semibold text-ink-soft">
-          © {year} {site.name} · Made with
+          © <CurrentYear namBuild={namBuild} /> {site.name} · Made with
           <FlowerIcon className="size-3 text-accent" />
           và rất nhiều len
         </p>

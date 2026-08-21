@@ -52,8 +52,12 @@ export default function Hero() {
               key={p.id}
               className={`animate-bob absolute m-0 overflow-hidden rounded-[26px] bg-card p-2 shadow-[var(--shadow-l)] ${FLOAT_POS[i]}`}
             >
+              {/* Bản thumb 500px: ba tấm này hiện rộng nhất cũng chỉ ~254px,
+                  nên 500px đã dư cho màn hình nét gấp đôi. Tấm đầu là ảnh to
+                  nhất người xem thấy khi vừa mở trang nên để priority, trình
+                  duyệt sẽ tải nó trước mọi thứ khác. */}
               <Image
-                src={p.image}
+                src={p.imageThumb}
                 alt={p.name}
                 width={480}
                 height={480}

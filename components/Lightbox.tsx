@@ -75,9 +75,15 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
     return () => document.body.classList.remove("overflow-hidden");
   }, []);
 
-  // Đưa con trỏ bàn phím vào popup ngay khi mở
+  // Đưa con trỏ bàn phím vào popup ngay khi mở, và trả về chỗ cũ khi đóng.
+  //
+  // Thiếu vế trả về thì người dùng bàn phím bị bỏ rơi: popup biến mất kéo theo
+  // cả nút đang focus, trình duyệt đành thả tiêu điểm về <body> — bấm Tab tiếp
+  // là quay lại từ đầu trang, phải rà lại từng nút mới về được chỗ đang xem.
   useEffect(() => {
+    const choCu = document.activeElement as HTMLElement | null;
     closeRef.current?.focus();
+    return () => choCu?.focus?.();
   }, []);
 
   // Dưới 768px thì cho vuốt xuống để đóng; từ md trở lên đã có chuột nên thôi
@@ -216,12 +222,15 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
               ảnh đó phóng to làm mờ, nhìn mềm hơn là để viền trắng trơ. */}
           <div className="relative mx-auto aspect-square w-full max-w-[min(33svh,320px)] overflow-hidden rounded-[22px] bg-bg-alt shadow-[var(--shadow-m)] ring-[3px] ring-white md:absolute md:left-6 md:right-6 md:top-1/2 md:max-h-[calc(100%-3rem)] md:w-auto md:max-w-none md:-translate-y-1/2 md:rounded-[26px]">
             <Image
-              key={`nen-${product.image}`}
-              src={product.image}
+              key={`nen-${product.imageMini}`}
+              /* Bản mini 96px: đằng nào cũng làm mờ tịt nên bé tí là đủ.
+                 Trước đây chỗ này trỏ vào ảnh gốc kèm sizes="64px" — nhưng
+                 trang xuất web tĩnh thì sizes chẳng có tác dụng gì, nó vẫn
+                 tải nguyên tấm mấy trăm KB về chỉ để bôi nhoè. */
+              src={product.imageMini}
               alt=""
               aria-hidden="true"
               fill
-              /* Đằng nào cũng làm mờ tịt nên xin bản bé nhất cho nhẹ mạng */
               sizes="64px"
               className="scale-110 object-cover opacity-55 blur-xl"
             />
@@ -335,8 +344,12 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
                           : "border-border opacity-70 hover:opacity-100"
                       }`}
                     >
+                      {/* Bản mini 96px. Chỗ này từng là điểm nặng nhất cả
+                          trang: ô chỉ rộng 54px nhưng tải ảnh gốc 1440px, mà
+                          ở tab "Tất cả" thì có tới 54 ô như vậy — kéo về gần
+                          như trọn bộ thư viện ảnh chỉ để vẽ một dải tí hon. */}
                       <Image
-                        src={p.image}
+                        src={p.imageMini}
                         alt=""
                         fill
                         loading="lazy"

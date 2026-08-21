@@ -43,5 +43,11 @@ next-env.d.ts
 # demo bang mau (khong can deploy)
 /demo
 
-# anh banner xuat ra (tao lai duoc bang: npm run banner)
-/banners-xuat
+# Anh goc do phan giai cao. Script scripts/toi-uu-anh.py chep vao day roi sinh
+# cac co nho hon trong public/. Thu muc nay KHONG len web va KHONG vao git cho
+# nhe repo - nho tu sao luu sang o cung khac hoac Google Drive.
+/anh-goc
+
+# Anh tach nen do scripts/tach-nen.py tao ra, chi dung khi ghep banner collage.
+# Trang web hien tai khong dung toi, tao lai duoc bang: python scripts/tach-nen.py
+/public/cutouts

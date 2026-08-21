@@ -4,7 +4,12 @@ export type Product = {
   id: string;
   name: string;
   desc: string;
+  /** Bản 1000px — ảnh lớn trong popup xem chi tiết */
   image: string;
+  /** Bản 500px — lưới sản phẩm và ba ảnh lơ lửng ở đầu trang */
+  imageThumb: string;
+  /** Bản 96px — dải ảnh nhỏ trong popup và mảng nền mờ phía sau ảnh lớn */
+  imageMini: string;
   /** Tên danh mục chứa sản phẩm — gắn thêm khi làm phẳng danh sách */
   categoryName: string;
   categorySlug: string;
@@ -27,10 +32,26 @@ type RawCategory = {
 
 const rawCategories = raw.categories as RawCategory[];
 
+/**
+ * Đổi "/images/abc.webp" thành "/images/thumb/abc.webp".
+ *
+ * Trang xuất ra web tĩnh nên bộ thu nhỏ ảnh của Next.js không chạy — thẻ
+ * <Image> phục vụ nguyên file được đưa cho nó, không tự chọn cỡ nhỏ hơn.
+ * Vì vậy ba cỡ ảnh phải làm sẵn bằng scripts/toi-uu-anh.py, và chỗ nào cần
+ * cỡ nào thì tự trỏ đúng vào cỡ đó. Hàm này giữ việc ghép đường dẫn ở một
+ * nơi duy nhất, đổi tên thư mục sau này chỉ phải sửa ở đây.
+ */
+function coAnh(image: string, co: "thumb" | "mini"): string {
+  const cat = image.lastIndexOf("/");
+  return `${image.slice(0, cat)}/${co}${image.slice(cat)}`;
+}
+
 /** Toàn bộ sản phẩm, đã làm phẳng và gắn kèm thông tin danh mục */
 export const products: Product[] = rawCategories.flatMap((c) =>
   c.products.map((p) => ({
     ...p,
+    imageThumb: coAnh(p.image, "thumb"),
+    imageMini: coAnh(p.image, "mini"),
     categoryName: c.name,
     categorySlug: c.slug,
   })),

@@ -1,0 +1,41 @@
+# Quy tac HTTP header cho Cloudflare Pages.
+# File nay Cloudflare doc thang, khong phai code - cu de nguyen trong public/
+# la luc build no tu nam vao thu muc out/.
+#
+# VI SAO CAN: mac dinh Pages gan "max-age=0, must-revalidate" cho moi file.
+# Nghia la moi lan khach quay lai web, trinh duyet phai hoi lai may chu tung
+# tam anh mot xem co gi moi khong - hon 100 luot hoi cho mot lan vao trang,
+# du chang co gi doi. May dong duoi bao trinh duyet cu dung ban da tai san.
+#
+# LUU Y khi sua anh: dat ten xong thi dung ghi de len ten cu. Ghi de thi khach
+# da tung vao web van thay anh cu ca nam. Doi anh -> doi luon ten file
+# (vd them hau to -v2) roi sua duong dan trong data/products.json.
+
+# --- Anh san pham va banner: giu vinh vien ---
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/banners/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# --- Anh chia se Facebook/Zalo: giu 7 ngay cho de doi ---
+/og.jpg
+  Cache-Control: public, max-age=604800
+
+# --- File JS/CSS do Next.js sinh ra deu co ma bam trong ten, doi noi dung la
+# --- doi ten, nen giu vinh vien duoc.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# --- Trang HTML thi nguoc lai: phai hoi lai moi lan, khong thi sua noi dung
+# --- xong khach van thay ban cu.
+# X-Frame-Options    : chan trang bi nhung vao iframe cua web khac de lua bam
+# X-Content-Type-... : trinh duyet khong duoc tu doan kieu file
+# Referrer-Policy    : sang web khac chi gui ten mien, khong gui duong dan day du
+# Permissions-Policy : trang nay khong dung camera/micro/dinh vi
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

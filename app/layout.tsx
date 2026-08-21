@@ -32,6 +32,24 @@ const banner = Playfair_Display({
   display: "swap",
 });
 
+/**
+ * Ảnh hiện lên khi ai đó dán link web vào Facebook, Zalo, Messenger.
+ *
+ * Không có ảnh này thì link chia sẻ chỉ hiện một ô xám trống trơ — với shop
+ * bán chủ yếu qua Facebook thì đó là mất khách thật. Muốn đổi ảnh khác: thay
+ * file public/og.jpg bằng ảnh mới đúng cỡ 1200x630 là xong, không phải sửa
+ * code. Nhớ dùng JPG hoặc PNG — Facebook đọc WebP không chắc ăn.
+ *
+ * Facebook nhớ ảnh cũ khá lâu; đổi rồi mà chưa thấy thì vào
+ * developers.facebook.com/tools/debug dán link vào bấm "Scrape Again".
+ */
+const ANH_CHIA_SE = {
+  url: "/og.jpg",
+  width: 1200,
+  height: 630,
+  alt: `${site.name} — đồ len móc tay handmade`,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
@@ -48,17 +66,23 @@ export const metadata: Metadata = {
     "quà tặng handmade",
     site.name,
   ],
+  // Trang chỉ có một địa chỉ duy nhất; khai canonical để máy tìm kiếm khỏi
+  // coi "có dấu /" và "không dấu /" là hai trang khác nhau.
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "vi_VN",
     siteName: site.name,
+    url: "/",
     title: `${site.name} — Đồ len móc tay handmade`,
     description: site.description,
+    images: [ANH_CHIA_SE],
   },
   twitter: {
     card: "summary_large_image",
     title: `${site.name} — Đồ len móc tay handmade`,
     description: site.description,
+    images: [ANH_CHIA_SE],
   },
 };
 

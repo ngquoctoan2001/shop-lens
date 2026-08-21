@@ -13,12 +13,22 @@ npm run dev
 
 Rồi mở <http://localhost:3000>.
 
-Muốn tạo bản chạy thật:
+Muốn xem thử đúng bản sẽ đưa lên web:
 
 ```bash
 npm run build
-npm start
 ```
+
+```bash
+npm run xem-that
+```
+
+Rồi mở <http://localhost:4321>.
+
+> `npm start` KHÔNG dùng được ở dự án này. Trang xuất ra web tĩnh
+> (`output: "export"` trong `next.config.ts`) nên `next start` sẽ báo lỗi —
+> không có máy chủ Node nào để mà chạy. `npm run xem-that` chỉ đơn giản là mở
+> một máy chủ file tĩnh trỏ vào thư mục `out/`, đúng y như Cloudflare Pages làm.
 
 ---
 
@@ -59,7 +69,9 @@ Chỉ sửa `name` và `desc`. **Giữ nguyên `id` và `image`.**
 2. Đặt tên theo kiểu `danhmuc-số-mô-tả`, ví dụ `mockhoa-18-gau-ao-len.jpg`
 3. Chạy `npm run webp` — ảnh JPG/PNG đổi sang `.webp` (nhẹ hơn ~50%), bản gốc
    được xoá đi. Ảnh chụp điện thoại cứ thả vào rồi chạy lệnh này là xong.
-4. Mở `data/products.json`, thêm một khối mới vào đúng danh mục — nhớ để đuôi
+4. Chạy `npm run anh` — **bước này bắt buộc**, xem mục "Ba cỡ ảnh" bên dưới.
+   Thiếu nó thì thẻ sản phẩm hiện ô trống vì không tìm thấy ảnh.
+5. Mở `data/products.json`, thêm một khối mới vào đúng danh mục — nhớ để đuôi
    `.webp`:
 
 ```json
@@ -72,6 +84,33 @@ Chỉ sửa `name` và `desc`. **Giữ nguyên `id` và `image`.**
 ```
 
 Số đếm trên nút danh mục tự cộng thêm, không phải sửa tay.
+
+### 3b. Ba cỡ ảnh — vì sao phải chạy `npm run anh`
+
+Trang xuất ra web tĩnh nên bộ thu nhỏ ảnh của Next.js không chạy được (nó cần
+một máy chủ Node đứng sau). Nghĩa là trình duyệt tải về đúng cái file mình đưa
+cho nó, không hơn không kém. Nếu để nguyên ảnh gốc 1440px thì điện thoại phải
+tải một tấm 400KB chỉ để vẽ vào ô rộng 165px — cả trang là gần 11MB.
+
+Nên ba cỡ ảnh phải làm sẵn:
+
+| Thư mục | Cỡ | Dùng ở đâu |
+|---|---|---|
+| `public/images/thumb/` | 500px | lưới sản phẩm, ba ảnh lơ lửng đầu trang |
+| `public/images/` | 1000px | ảnh lớn trong popup |
+| `public/images/mini/` | 96px | dải ảnh nhỏ trong popup, nền mờ phía sau |
+
+```bash
+npm run anh
+```
+
+Lệnh này chép ảnh gốc sang `anh-goc/` (nằm ngoài `public/` nên không lên web,
+cũng không vào git) rồi sinh cả ba cỡ từ đó. Chạy lại bao nhiêu lần cũng được,
+ảnh nào làm rồi thì bỏ qua.
+
+> **Đừng xoá thư mục `anh-goc/`.** Đó là bản độ phân giải cao duy nhất còn lại;
+> ba cỡ trong `public/` đều đã bị thu nhỏ, không phóng to lại được. Vì nó không
+> vào git nên nhớ tự chép sang ổ khác hoặc Google Drive.
 
 ### 4. Đổi màu → `app/globals.css`
 
@@ -114,11 +153,19 @@ components/
   About.tsx         ba bước đặt hàng
   ContactCTA.tsx    khối nhắn Zalo / Messenger
   Footer.tsx        chân trang
+  CurrentYear.tsx   năm thật cho dòng bản quyền (web tĩnh nên phải chỉnh ở máy khách)
 lib/products.ts     đọc products.json, đếm số lượng theo danh mục
+lib/category.ts     cầu nối "bấm banner -> lọc lưới sản phẩm"
 data/products.json  toàn bộ sản phẩm
-public/images/      54 ảnh sản phẩm (ảnh gốc)
-public/cutouts/     54 ảnh sản phẩm đã tách nền (WebP trong suốt)
+public/images/      54 ảnh sản phẩm, bản 1000px (ảnh lớn trong popup)
+public/images/thumb/  bản 500px — lưới sản phẩm
+public/images/mini/   bản 96px  — dải ảnh nhỏ trong popup
 public/banners/     6 ảnh banner danh mục — tự bỏ vào
+public/og.jpg       ảnh hiện khi chia sẻ link lên Facebook/Zalo (1200x630)
+public/_headers     quy tắc bộ nhớ đệm cho Cloudflare Pages
+public/cutouts/     ảnh đã tách nền — chỉ tạo khi cần ghép banner, không lên web
+anh-goc/            ẢNH GỐC độ phân giải cao (không lên web, không vào git)
+scripts/toi-uu-anh.py sinh ba cỡ ảnh — chạy bằng `npm run anh`
 scripts/tach-nen.py script tách nền ảnh sản phẩm
 demo/               4 bản demo bảng màu (chỉ để tham khảo, không lên web)
 site.config.ts      thông tin shop + link liên hệ
@@ -153,6 +200,8 @@ có ảnh thì hiện khung nét đứt nhắc tên file cần đặt.
    `quan-ao`, `phu-kien`, `hoa-qua-tang`
 3. Thả vào `public/banners/`
 4. Chạy `npm run webp` để đổi sang `.webp` — trang chỉ đọc file `.webp`
+5. Chạy `npm run anh` để thu ảnh về 1600px (banner rộng nhất cũng chỉ hiện
+   khoảng 800px, để nguyên 1920px là tải thừa gần gấp đôi)
 
 Banner tự hiện, không phải sửa code. Chưa đủ 6 cái cũng không sao — cái nào có
 ảnh thì hiện ảnh, cái nào chưa thì vẫn là khung trống.
@@ -164,10 +213,13 @@ danh sách ảnh sản phẩm cần tải lên cho từng prompt.
 
 ### Ảnh sản phẩm đã tách nền
 
-`public/cutouts/` chứa 54 ảnh sản phẩm đã xoá nền (WebP, nền trong suốt) — dùng
-làm ảnh mẫu đưa cho AI, hoặc kéo thả thẳng vào Canva để tự ghép banner.
+Muốn có ảnh sản phẩm đã xoá nền (WebP, nền trong suốt) — làm ảnh mẫu đưa cho AI,
+hoặc kéo thả thẳng vào Canva để tự ghép banner — thì chạy lệnh dưới đây, kết quả
+ra thư mục `public/cutouts/`.
 
-Sau khi thêm ảnh sản phẩm mới, chạy lệnh này để tách nền cho ảnh mới:
+Thư mục này **không nằm sẵn trong dự án và không lên web**: 6 banner đã làm xong
+rồi nên trang không dùng tới nó nữa, để lại chỉ tổ nặng thêm 6.6 MB mỗi lần
+deploy. Cần thì tạo lại lúc nào cũng được:
 
 ```bash
 npm run tach-nen
@@ -184,8 +236,11 @@ npm run tach-nen
 ## Ảnh trên web đều là WebP
 
 Toàn bộ ảnh trong `public/` là định dạng **WebP** — nhẹ hơn JPG khoảng 50% mà
-mắt thường không thấy khác. Cả thư mục ảnh giảm từ 24.7 MB xuống 11.6 MB, trang
-tải nhanh hơn hẳn trên 4G. Trình duyệt nào từ 2020 trở đi cũng đọc được.
+mắt thường không thấy khác. Trình duyệt nào từ 2020 trở đi cũng đọc được.
+
+Chuyển WebP mới là bước một; bước hai là thu về đúng cỡ cần dùng (`npm run anh`,
+xem mục 3b ở trên). Hai bước cộng lại đưa thư mục ảnh từ 24.7 MB xuống 6.3 MB,
+và quan trọng hơn: cuộn tới lưới sản phẩm giờ chỉ tải 1.3 MB thay vì 10.8 MB.
 
 Thêm ảnh mới không cần tự đổi định dạng — cứ thả file JPG/PNG vào
 `public/images/` hoặc `public/banners/` rồi chạy:
@@ -203,13 +258,33 @@ của Next.js để làm favicon, không nhận định dạng WebP.
 
 ## Đưa web lên mạng
 
-Cách nhanh nhất là [Vercel](https://vercel.com) (miễn phí, cùng nhà làm Next.js):
+Dự án đã chỉnh sẵn cho **Cloudflare Pages**: `next.config.ts` đặt
+`output: "export"` nên `npm run build` cho ra một thư mục `out/` toàn file tĩnh,
+không cần máy chủ chạy nền, và gói miễn phí của Cloudflare là quá đủ.
 
 1. Đẩy thư mục này lên GitHub
-2. Vào Vercel → Import repo → bấm Deploy, không cần chỉnh gì thêm
+2. Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git
+3. Khai đúng ba ô này:
 
-Sau khi có tên miền thật, nhớ sửa `url` trong `site.config.ts` để link chia sẻ
-lên Facebook/Zalo hiện đúng ảnh và tiêu đề.
+   | Ô | Điền |
+   |---|---|
+   | Framework preset | None (hoặc Next.js Static HTML Export) |
+   | Build command | `npm run build` |
+   | Build output directory | `out` |
+
+4. Bấm Save and Deploy
+
+Trước khi deploy nhớ chạy `npm run anh` và commit các thư mục `thumb/`, `mini/`
+— Cloudflare chỉ build code chứ không chạy script Python, thiếu ảnh là thẻ sản
+phẩm hiện ô trống.
+
+### Sau khi có tên miền riêng
+
+Sửa đúng một dòng `url` trong `site.config.ts`. Cả thẻ chia sẻ Facebook/Zalo,
+`robots.txt`, `sitemap.xml` và link canonical đều ăn theo dòng đó.
+
+Đổi xong nhớ vào <https://developers.facebook.com/tools/debug> dán link mới rồi
+bấm **Scrape Again** — Facebook nhớ ảnh xem trước cũ khá dai.
 
 ---
 

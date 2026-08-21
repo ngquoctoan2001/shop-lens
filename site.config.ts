@@ -12,8 +12,15 @@ export const site = {
   /** Mô tả ngắn — dùng cho SEO và khi chia sẻ link lên Facebook/Zalo */
   description:
     "Tiệm len nhỏ móc tay từng chiếc: móc khóa, thú bông, túi ví, hoa len và quà tặng. Nhận đặt móc theo yêu cầu.",
-  /** Đổi thành tên miền thật khi lên web, vd "https://lennhasuen.vn" */
-  url: "https://lennhasuen.vn",
+  /**
+   * Địa chỉ thật của web. Dùng cho thẻ chia sẻ Facebook/Zalo, sitemap và
+   * robots.txt — sai chỗ này là ảnh xem trước lúc chia sẻ link không hiện.
+   *
+   * Đang để tên miền miễn phí của Cloudflare Pages. Mua tên miền riêng
+   * (vd "https://lennhasuen.vn") thì sửa đúng một dòng này, mọi chỗ khác
+   * tự ăn theo.
+   */
+  url: "https://lennhasuen.pages.dev",
 
   /** Các mục điều hướng — dùng chung cho menu đầu trang và chân trang */
   nav: [

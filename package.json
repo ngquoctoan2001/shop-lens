@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "xem-that": "python -m http.server 4321 --directory out",
     "lint": "eslint",
+    "anh": "python scripts/toi-uu-anh.py",
     "tach-nen": "python scripts/tach-nen.py",
     "webp": "python scripts/chuyen-webp.py"
   },

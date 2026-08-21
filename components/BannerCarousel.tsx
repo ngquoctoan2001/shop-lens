@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { BANNER_RATIO } from "@/lib/banners";
+import { chonDanhMuc } from "@/lib/category";
 import { ArrowRightIcon, PauseIcon, PlayIcon } from "./Icons";
 
 export type BannerCard = {
@@ -18,15 +19,69 @@ export type BannerCard = {
 const DOI_SAU = 5000;
 /** Lướt tay xong thì nghỉ chừng này rồi mới tự chạy tiếp */
 const NGHI_SAU_KHI_LUOT = 8000;
+/** Ngưng cuộn chừng này (ms) thì mới lén dời dải về bản giữa */
+const CHO_LANG = 120;
+/** Chép dải banner ra mấy bản đặt liền nhau để cuộn thành vòng tròn */
+const SO_BAN = 3;
+/** Bản đứng giữa — chỗ neo, lúc nào cũng kéo người xem về quanh đây */
+const BAN_GIUA = 1;
 
 /**
- * Dải banner tự đổi tấm, nhưng vẫn lướt tay hoặc kéo chuột được bình thường.
+ * Số đo của khung cuộn, đo một lần rồi nhớ lại.
+ *
+ * `moc[i]` là chỗ cần cuộn tới để tấm thứ i nằm sát lề trái khung.
+ * `cuoiDuong` là chỗ cuộn xa nhất có thể.
+ *
+ * Vì sao phải nhớ: getComputedStyle và offsetLeft đều bắt trình duyệt tính
+ * lại bố cục ngay tại chỗ. Đọc chúng trong hàm chạy theo từng khung hình cuộn
+ * — với 6 banner nhân 3 bản là 18 lần đọc mỗi khung — thì máy yếu và điện
+ * thoại cuộn sẽ rít. Mấy con số này chỉ đổi khi cửa sổ đổi cỡ, nên đo một lần
+ * là đủ, còn lại chỉ tính cộng trừ.
+ */
+type SoDo = { moc: number[]; cuoiDuong: number };
+
+const doKhung = (track: HTMLElement): SoDo => {
+  const le = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+  // Đo bằng getBoundingClientRect chứ không dùng offsetLeft: offsetLeft làm
+  // tròn về số nguyên, mà bề rộng banner tính theo vw nên hầu như luôn lẻ
+  // (màn 1440 mỗi tấm 604.8px). Chỗ dời dải nối vòng lấy hiệu của hai mốc nên
+  // sai số làm tròn ở đó cộng dồn lên gấp đôi — đo số lẻ thì khỏi lo.
+  //
+  // Đổi từ hệ toạ độ màn hình về hệ toạ độ cuộn: cộng lại chỗ đang cuộn, trừ
+  // đi mép trong bên trái của khung (viền + lề).
+  const goc = track.getBoundingClientRect().left + track.clientLeft;
+  const truot = track.scrollLeft;
+  return {
+    moc: Array.from(
+      track.children,
+      (con) =>
+        truot + (con as HTMLElement).getBoundingClientRect().left - goc - le,
+    ),
+    cuoiDuong: track.scrollWidth - track.clientWidth,
+  };
+};
+
+/** Bề rộng đúng một vòng banner (n tấm + n khe hở). Đo bằng khoảng cách giữa
+ *  tấm đầu của hai bản liền nhau, khỏi phải cộng tay bề rộng tấm với gap —
+ *  gap đổi theo breakpoint, cộng tay là sai. */
+const beRongVong = (soDo: SoDo, soTam: number) =>
+  soDo.moc.length > soTam ? soDo.moc[soTam] - soDo.moc[0] : 0;
+
+/**
+ * Dải banner tự đổi tấm, cuộn vòng tròn, vẫn lướt tay hoặc kéo chuột được.
  *
  * Ruột vẫn là khung cuộn ngang thật của trình duyệt (overflow-x-auto +
  * scroll-snap) chứ không phải transform giả lập. Nhờ vậy vuốt trên điện thoại
  * có đà trượt tự nhiên, bàn di chuột hai ngón vẫn chạy, phím Tab vẫn tới được
- * từng banner. Phần viết thêm chỉ có hai việc: hẹn giờ cuộn sang tấm kế, và
- * cho kéo bằng chuột — vì chuột không tự kéo được khung cuộn.
+ * từng banner. Phần viết thêm chỉ có ba việc: hẹn giờ cuộn sang tấm kế, cho
+ * kéo bằng chuột (chuột không tự kéo được khung cuộn), và nối hai đầu dải lại
+ * thành vòng tròn.
+ *
+ * Vòng tròn làm bằng cách chép dải ra SO_BAN bản giống hệt xếp liền nhau, thả
+ * người xem đứng ở bản giữa. Vuốt tới tấm cuối thì tấm kế đã có sẵn ở bản sau
+ * — không hề đụng tường. Cuộn lắng xuống rồi thì lén dời scrollLeft đúng một
+ * vòng để về lại bản giữa: ba bản giống hệt nhau nên trên màn hình không đổi
+ * lấy một pixel, mà hai bên lúc nào cũng còn đường để vuốt tiếp.
  *
  * Tự chạy sẽ ngưng khi: rê chuột/focus vào, đang lướt (và 8 giây sau đó), dải
  * banner trôi khỏi màn hình, người xem bấm nút dừng, hoặc máy đang bật chế độ
@@ -34,8 +89,16 @@ const NGHI_SAU_KHI_LUOT = 8000;
  */
 export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const soTam = cards.length;
+  /** Một tấm thì chẳng có gì mà vòng; chép ra cũng vô ích. */
+  const quayVong = soTam > 1;
+  const banGiua = quayVong ? BAN_GIUA : 0;
+  const soBan = quayVong ? SO_BAN : 1;
+
+  /** Tấm đang xem, đếm theo danh sách GỐC (0…soTam-1) — hàng chấm dùng số này */
   const [index, setIndex] = useState(0);
-  const indexRef = useRef(0);
+  /** Tấm đang xem, đếm theo dải ĐÃ CHÉP (0…soTam*soBan-1) — phần cuộn dùng số này */
+  const viTriRef = useRef(0);
 
   const [batTuChay, setBatTuChay] = useState(true); // nút dừng/chạy
   const [reVao, setReVao] = useState(false); // rê chuột hoặc focus vào
@@ -44,27 +107,92 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
   const [giamChuyenDong, setGiamChuyenDong] = useState(false);
 
   const dangTuChay =
-    cards.length > 1 &&
-    batTuChay &&
-    !reVao &&
-    !vuaLuot &&
-    trongTam &&
-    !giamChuyenDong;
+    quayVong && batTuChay && !reVao && !vuaLuot && trongTam && !giamChuyenDong;
 
-  /** Lề trái của khung cuộn. Dải banner trải sát mép nên hiện bằng 0 — đọc
-   *  từ CSS chứ không ghi cứng, sau này thụt vào lại thì khỏi sửa chỗ này. */
-  const leTrai = (track: HTMLElement) =>
-    parseFloat(getComputedStyle(track).paddingLeft) || 0;
+  /* --- Kéo bằng chuột. Cảm ứng thì trình duyệt tự lo, khỏi đụng vào ---
+     Khai báo sớm vì chỗ dời dải cần biết có đang kéo dở hay không. */
+  const keo = useRef({ dang: false, tuX: 0, tuScroll: 0, daDiChuyen: false });
+  const hoiSuc = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  /* --- Cuộn tới tấm thứ i, cho mép trái nó về sát lề trái khung ---
+  /* --- Số đo khung cuộn, đo lười rồi nhớ lại (xem chú thích ở doKhung) --- */
+  const soDoRef = useRef<SoDo | null>(null);
+
+  const laySoDo = useCallback((track: HTMLElement): SoDo => {
+    // Đo lại khi chưa có, hoặc khi số tấm trong dải đã khác đi so với lần đo
+    // trước — nghĩa là danh sách banner vừa đổi.
+    if (soDoRef.current?.moc.length !== track.children.length) {
+      soDoRef.current = doKhung(track);
+    }
+    return soDoRef.current;
+  }, []);
+
+  /* Đổi cỡ cửa sổ là mọi số đo cũ hết giá trị: bề rộng banner tính theo vw,
+     mà khe hở giữa các tấm cũng đổi theo breakpoint. */
+  useEffect(() => {
+    const boNho = () => {
+      soDoRef.current = null;
+    };
+    window.addEventListener("resize", boNho, { passive: true });
+    return () => window.removeEventListener("resize", boNho);
+  }, []);
+
+  /* --- Cuộn tới tấm thứ i của dải đã chép, cho mép trái nó về sát lề khung ---
      Không canh vào GIỮA khung cuộn được: khung rộng hết màn hình nên canh
      giữa là banner nhảy lệch hẳn so với lúc đứng yên (màn 1920 lệch 302px). */
-  const den = useCallback((i: number) => {
+  const den = useCallback(
+    (i: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      const moc = laySoDo(track).moc[i];
+      if (moc === undefined) return;
+      track.scrollTo({ left: moc, behavior: "smooth" });
+    },
+    [laySoDo],
+  );
+
+  /* --- Lén dời dải về bản giữa: đây là chỗ duy nhất tạo ra cảm giác vòng tròn.
+     Dời đúng bội số của một vòng nên hình trên màn không đổi, và vì mọi tấm
+     cách nhau đúng một khoảng nên chỗ đáp vẫn là một điểm snap hợp lệ. */
+  const veBanGiua = useCallback(() => {
     const track = trackRef.current;
-    const tam = track?.children[i] as HTMLElement | undefined;
-    if (!track || !tam) return;
-    track.scrollTo({ left: tam.offsetLeft - leTrai(track), behavior: "smooth" });
-  }, []);
+    // Đang kéo chuột thì đừng đụng vào: hàm kéo lấy scrollLeft lúc bấm xuống
+    // làm mốc, dời ngang xương giữa chừng là tay đi một đằng dải chạy một nẻo.
+    if (!track || !quayVong || keo.current.dang) return;
+
+    const soDo = laySoDo(track);
+    const vong = beRongVong(soDo, soTam);
+    // Một vòng phải dài hơn khung nhìn thì hai bên mới đủ đường mà lùi. Ít
+    // banner quá (hoặc màn siêu rộng) thì thôi, để nó cuộn thẳng như dải thường
+    // còn hơn giật tới giật lui.
+    if (!vong || vong <= track.clientWidth) return;
+
+    const neo = soDo.moc[soTam * BAN_GIUA];
+    if (neo === undefined) return;
+    const buoc = Math.round((track.scrollLeft - neo) / vong);
+    // Lùi đúng một (hoặc mấy) vòng. Bản giữa và bản kế giống hệt nhau tới
+    // từng pixel nên hình trên màn giữ nguyên.
+    //
+    // Nói cho ngay: không tuyệt đối 100%. Trình duyệt chỉ giữ scrollLeft ở số
+    // nguyên pixel, mà banner rộng theo vw nên một vòng thường lẻ (màn 1440:
+    // một vòng 3748.78px). Lùi một vòng là hụt/dư tối đa nửa pixel, đủ để tấm
+    // ló ra ngoài cùng bên phải xê một pixel. Đã thử nhắm thẳng vào mốc đã đo
+    // của tấm tương ứng: y hệt, vì nút thắt nằm ở chỗ scrollLeft làm tròn chứ
+    // không phải ở phép trừ. Máy thật màn dày pixel (DPR 2–3) còn lệch ít hơn.
+    if (buoc !== 0) track.scrollLeft -= buoc * vong;
+  }, [quayVong, soTam, laySoDo]);
+
+  /* --- Vào trang thì đứng sẵn ở bản giữa, để vuốt ngược lại cũng có đường ---
+     Đặt thẳng scrollLeft chứ không "smooth": ba bản giống hệt nhau nên nhảy
+     từ bản đầu sang bản giữa mắt không nhận ra gì. */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track || !quayVong) return;
+    const dau = laySoDo(track).moc[soTam * BAN_GIUA];
+    if (dau === undefined) return;
+    track.scrollLeft = dau;
+    viTriRef.current = soTam * BAN_GIUA;
+    setIndex(0);
+  }, [quayVong, soTam, laySoDo]);
 
   /* --- Đang xem tấm nào: lấy tấm có mép trái gần chỗ đang cuộn nhất --- */
   useEffect(() => {
@@ -72,34 +200,51 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     if (!track) return;
 
     let cho = 0;
+    let langNghe: ReturnType<typeof setTimeout>;
+
     const doLai = () => {
       cancelAnimationFrame(cho);
       cho = requestAnimationFrame(() => {
-        const le = leTrai(track);
+        const { moc, cuoiDuong } = laySoDo(track);
+        const dangO = track.scrollLeft;
         let gan = 0;
         let lechIt = Infinity;
 
-        Array.from(track.children).forEach((con, i) => {
-          const el = con as HTMLElement;
-          const lech = Math.abs(el.offsetLeft - le - track.scrollLeft);
+        moc.forEach((m, i) => {
+          const lech = Math.abs(m - dangO);
           if (lech < lechIt) {
             lechIt = lech;
             gan = i;
           }
         });
 
-        indexRef.current = gan;
-        setIndex(gan);
+        viTriRef.current = gan;
+        setIndex(gan % soTam);
+
+        // Sắp cụng vào một trong hai đầu dải thì dời ngay, không đợi lắng
+        // nữa: đợi thêm là người xem đụng tường thật, vuốt tiếp không nhúc
+        // nhích — đúng cái cảnh cần tránh.
+        const mot = beRongVong({ moc, cuoiDuong }, soTam) / soTam;
+        if (mot && (dangO < mot || dangO > cuoiDuong - mot)) {
+          veBanGiua();
+        }
       });
+
+      // Bình thường thì đợi cuộn dừng hẳn mới dời. Dời giữa chừng là cú vuốt
+      // đang trớn bị cắt ngang, khựng lại một cái rất khó chịu (rõ nhất trên
+      // iOS). Cuộn còn chạy thì hẹn giờ này cứ bị dời lại, không bao giờ nổ.
+      clearTimeout(langNghe);
+      langNghe = setTimeout(veBanGiua, CHO_LANG);
     };
 
     doLai();
     track.addEventListener("scroll", doLai, { passive: true });
     return () => {
       cancelAnimationFrame(cho);
+      clearTimeout(langNghe);
       track.removeEventListener("scroll", doLai);
     };
-  }, []);
+  }, [soTam, veBanGiua, laySoDo]);
 
   /* --- Hẹn giờ tự đổi tấm --- */
   useEffect(() => {
@@ -108,26 +253,44 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
       const track = trackRef.current;
       if (!track) return;
 
-      const le = leTrai(track);
-      const cuoiDuong = track.scrollWidth - track.clientWidth;
-      const dich = (i: number) =>
-        Math.min((track.children[i] as HTMLElement).offsetLeft - le, cuoiDuong);
+      const { moc, cuoiDuong } = laySoDo(track);
+      const dich = (i: number) => Math.min(moc[i], cuoiDuong);
 
-      let ke = (indexRef.current + 1) % cards.length;
-      // Màn rộng xem được mấy tấm một lúc, nên mấy tấm cuối lùi không hết cỡ
-      // về lề được — chỗ dừng của chúng trùng nhau. Cứ đổi tiếp thì banner
-      // đứng im nguyên một nhịp 5 giây. Gặp vậy thì quay luôn về tấm đầu.
-      if (ke !== 0 && Math.abs(dich(ke) - track.scrollLeft) < 8) ke = 0;
+      // Cứ nhích thêm một tấm là xong — hết bản này đã có bản sau nối vào, còn
+      // việc dời về bản giữa đã có veBanGiua lo.
+      let ke = viTriRef.current + 1;
+      // Chỉ khi KHÔNG quay vòng được mới có chuyện hết dải, hoặc mấy tấm cuối
+      // lùi không hết cỡ về lề nên chỗ dừng trùng nhau — cứ đổi tiếp thì banner
+      // đứng im nguyên một nhịp 5 giây. Gặp vậy thì quay về tấm đầu.
+      if (ke >= moc.length || Math.abs(dich(ke) - track.scrollLeft) < 8) {
+        ke = soTam * banGiua;
+      }
 
       // Ghi số thứ tự ngay tại đây chứ không đợi sự kiện cuộn báo về. Đợi thì
       // nhịp sau vẫn thấy số cũ và nhắm lại đúng tấm vừa rồi — banner đứng ì
       // một chỗ. Người xem tự lướt thì sự kiện cuộn sẽ chỉnh lại cho khớp.
-      indexRef.current = ke;
-      setIndex(ke);
+      viTriRef.current = ke;
+      setIndex(ke % soTam);
       den(ke);
     }, DOI_SAU);
     return () => clearInterval(hen);
-  }, [dangTuChay, cards.length, den]);
+  }, [dangTuChay, soTam, banGiua, den, laySoDo]);
+
+  /* --- Bấm chấm thì tới BẢN GẦN NHẤT của tấm đó, khỏi chạy ngược cả dải --- */
+  const denTam = useCallback(
+    (iGoc: number) => {
+      const dang = viTriRef.current;
+      let chon = iGoc;
+      for (let ban = 1; ban < soBan; ban++) {
+        const ung = ban * soTam + iGoc;
+        if (Math.abs(ung - dang) < Math.abs(chon - dang)) chon = ung;
+      }
+      viTriRef.current = chon;
+      setIndex(iGoc);
+      den(chon);
+    },
+    [soBan, soTam, den],
+  );
 
   /* --- Máy đang bật "giảm chuyển động" thì không tự chạy --- */
   useEffect(() => {
@@ -149,10 +312,6 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     theoDoi.observe(track);
     return () => theoDoi.disconnect();
   }, []);
-
-  /* --- Kéo bằng chuột. Cảm ứng thì trình duyệt tự lo, khỏi đụng vào --- */
-  const keo = useRef({ dang: false, tuX: 0, tuScroll: 0, daDiChuyen: false });
-  const hoiSuc = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => () => clearTimeout(hoiSuc.current), []);
 
@@ -197,6 +356,8 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
       }
       // Bật snap lại là trình duyệt tự bắt về tấm gần nhất.
       track.style.scrollSnapType = "";
+      // Nhả tay xong mới tới lượt dời dải — lúc kéo thì veBanGiua tự né.
+      veBanGiua();
     }
     hoiSuc.current = setTimeout(() => setVuaLuot(false), NGHI_SAU_KHI_LUOT);
   };
@@ -208,6 +369,32 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     e.preventDefault();
     e.stopPropagation();
   };
+
+  /**
+   * Bấm vào một banner: lọc lưới sản phẩm theo danh mục đó rồi cuộn xuống.
+   *
+   * Thẻ <a> vẫn giữ nguyên href thật để giữa chuột / Ctrl+bấm mở tab mới vẫn
+   * ra đúng danh mục, và để máy tìm kiếm còn thấy đường dẫn. Chỉ cú bấm trái
+   * thường mới chặn lại — vì tự trình duyệt nó KHÔNG cuộn được: nó đi tìm
+   * phần tử có id "san-pham=thu-bong", chẳng có cái nào tên vậy.
+   */
+  const bamBanner = (e: React.MouseEvent<HTMLAnchorElement>, slug: string) => {
+    // chanBamNham chạy trước ở pha capture; nó đã chặn thì đây là cú nhả tay
+    // sau khi kéo dải, không phải người xem muốn bấm.
+    if (e.defaultPrevented) return;
+    // Mở tab mới / cửa sổ mới thì để trình duyệt tự lo theo href.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
+      return;
+    }
+    e.preventDefault();
+    chonDanhMuc(slug);
+  };
+
+  /* Dải đã chép: soBan bản nối đuôi nhau. `ban` là bản thứ mấy, `i` là số thứ
+     tự trong danh sách gốc. */
+  const daiBanner = Array.from({ length: soBan }, (_, ban) =>
+    cards.map((c, i) => ({ c, i, ban })),
+  ).flat();
 
   return (
     <div
@@ -226,69 +413,83 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
         onDragStart={(e) => e.preventDefault()}
         className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto pb-4 active:cursor-grabbing sm:gap-5"
       >
-        {cards.map((c, i) => (
-          <a
-            key={c.slug}
-            href={`#san-pham=${c.slug}`}
-            aria-label={`Xem nhóm ${c.name} — ${c.count} mẫu`}
-            className="group relative w-[78vw] shrink-0 snap-start overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:rounded-[32px] lg:w-[42vw]"
-            style={{ aspectRatio: BANNER_RATIO }}
-          >
-            {c.coAnh ? (
-              <>
-                <Image
-                  src={c.image}
-                  alt={c.name}
-                  fill
-                  // Banner tự đổi sau 5 giây nên ba tấm đầu phải tải sẵn, để
-                  // lười tải thì tới lượt nó mới tải, người xem thấy ô trống
-                  // chớp một cái. Ba tấm sau cứ để tải khi cuộn gần tới.
-                  priority={i === 0}
-                  loading={i < 3 ? "eager" : "lazy"}
-                  draggable={false}
-                  sizes="(max-width: 640px) 78vw, (max-width: 1024px) 52vw, 560px"
-                  className="select-none object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-                {/* Vệt tối ở đáy để chữ đọc được trên mọi kiểu ảnh */}
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 to-transparent"
-                />
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
-                  <div>
-                    <h3 className="text-lg font-bold text-white drop-shadow-sm sm:text-xl">
-                      {c.name}
-                    </h3>
-                    <p className="text-[13px] font-bold text-white/90">
-                      {c.count} mẫu
-                    </p>
+        {daiBanner.map(({ c, i, ban }) => {
+          /* Bản giữa mới là bản "thật": trình đọc màn hình và phím Tab chỉ làm
+             việc với nó. Hai bản chép kia thuần để mắt nhìn cho liền mạch, mở
+             cho đọc nữa thì cùng một banner bị xướng tên tới ba lần. */
+          const that = ban === banGiua;
+          return (
+            <a
+              key={`${ban}-${c.slug}`}
+              href={`#san-pham=${c.slug}`}
+              onClick={(e) => bamBanner(e, c.slug)}
+              aria-hidden={that ? undefined : true}
+              tabIndex={that ? undefined : -1}
+              aria-label={
+                that ? `Xem nhóm ${c.name} — ${c.count} mẫu` : undefined
+              }
+              className="group relative w-[78vw] shrink-0 snap-start overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:rounded-[32px] lg:w-[42vw]"
+              style={{ aspectRatio: BANNER_RATIO }}
+            >
+              {c.coAnh ? (
+                <>
+                  <Image
+                    src={c.image}
+                    alt={that ? c.name : ""}
+                    fill
+                    // Banner tự đổi sau 5 giây nên ba tấm đầu phải tải sẵn, để
+                    // lười tải thì tới lượt nó mới tải, người xem thấy ô trống
+                    // chớp một cái. Ba tấm sau cứ để tải khi cuộn gần tới.
+                    // Chỉ tính trên bản giữa — bản người xem thấy lúc mới vào;
+                    // hai bản chép dùng lại đúng đường dẫn ấy nên có sẵn trong
+                    // bộ nhớ đệm, không tốn thêm lượt tải nào.
+                    priority={that && i === 0}
+                    loading={that && i < 3 ? "eager" : "lazy"}
+                    draggable={false}
+                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 52vw, 560px"
+                    className="select-none object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                  {/* Vệt tối ở đáy để chữ đọc được trên mọi kiểu ảnh */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 to-transparent"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
+                    <div>
+                      <h3 className="text-lg font-bold text-white drop-shadow-sm sm:text-xl">
+                        {c.name}
+                      </h3>
+                      <p className="text-[13px] font-bold text-white/90">
+                        {c.count} mẫu
+                      </p>
+                    </div>
+                    <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/90 text-ink transition-transform duration-300 group-hover:translate-x-1">
+                      <ArrowRightIcon className="size-[18px]" />
+                    </span>
                   </div>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/90 text-ink transition-transform duration-300 group-hover:translate-x-1">
-                    <ArrowRightIcon className="size-[18px]" />
+                </>
+              ) : (
+                /* --- Khung trống chờ thả ảnh vào --- */
+                <div className="flex h-full flex-col items-center justify-center gap-2 border-[3px] border-dashed border-border bg-bg-alt p-5 text-center">
+                  <span className="rounded-full border-2 border-dashed border-accent bg-card px-3.5 py-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.14em] text-accent-3">
+                    Chưa có ảnh
                   </span>
+                  <h3 className="text-lg font-bold sm:text-xl">{c.name}</h3>
+                  <p className="text-[13px] font-semibold text-ink-soft">
+                    {c.count} mẫu
+                  </p>
+                  <code className="mt-1 rounded-lg bg-card px-2.5 py-1 font-mono text-[11px] font-bold text-ink-soft sm:text-xs">
+                    public{c.image}
+                  </code>
                 </div>
-              </>
-            ) : (
-              /* --- Khung trống chờ thả ảnh vào --- */
-              <div className="flex h-full flex-col items-center justify-center gap-2 border-[3px] border-dashed border-border bg-bg-alt p-5 text-center">
-                <span className="rounded-full border-2 border-dashed border-accent bg-card px-3.5 py-1.5 text-[11.5px] font-extrabold uppercase tracking-[0.14em] text-accent-3">
-                  Chưa có ảnh
-                </span>
-                <h3 className="text-lg font-bold sm:text-xl">{c.name}</h3>
-                <p className="text-[13px] font-semibold text-ink-soft">
-                  {c.count} mẫu
-                </p>
-                <code className="mt-1 rounded-lg bg-card px-2.5 py-1 font-mono text-[11px] font-bold text-ink-soft sm:text-xs">
-                  public{c.image}
-                </code>
-              </div>
-            )}
-          </a>
-        ))}
+              )}
+            </a>
+          );
+        })}
       </div>
 
       {/* --- Hàng chấm + nút dừng --- */}
-      {cards.length > 1 && (
+      {quayVong && (
         <div className="mx-auto flex w-[min(100%-1.75rem,1180px)] items-center justify-center gap-1 sm:w-[min(100%-2.5rem,1180px)]">
           {cards.map((c, i) => {
             const dangXem = i === index;
@@ -303,7 +504,7 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
                     () => setVuaLuot(false),
                     NGHI_SAU_KHI_LUOT,
                   );
-                  den(i);
+                  denTam(i);
                 }}
                 aria-label={`Xem banner ${c.name}`}
                 aria-current={dangXem ? "true" : undefined}
