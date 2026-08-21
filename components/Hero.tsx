@@ -72,10 +72,14 @@ export default function Hero() {
             Nhận đặt móc theo yêu cầu
           </span>
 
-          <h1 className="text-[clamp(38px,5.6vw,66px)] font-semibold tracking-[-0.03em]">
+          <h1 className="text-[clamp(38px,5.6vw,66px)] font-bold tracking-[-0.03em]">
+            {/* Ngắt sẵn ba dòng. Cứ để trình duyệt tự xuống dòng thì chữ
+                "bạn" rớt lại một mình ở dòng cuối, nhìn rất lẻ. */}
             Từng mũi len,
             <br />
-            <span className="marker">gói trọn thương</span> gửi bạn
+            <span className="marker">gói trọn thương</span>
+            <br />
+            gửi bạn
           </h1>
 
           <p className="my-5 max-w-[47ch] text-[clamp(16px,1.9vw,19px)] font-medium text-ink-soft">

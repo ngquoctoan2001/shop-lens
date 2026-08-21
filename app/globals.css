@@ -26,6 +26,11 @@
   --blob-2: #f2c9bf;
   --blob-3: #ebd9be;
 
+  /* Bóng riêng cho thanh đầu trang khi cuộn xuống — rộng và mềm để tách
+     header khỏi phần nội dung chạy bên dưới, không thành vệt đen cứng. */
+  --shadow-header:
+    0 2px 6px -1px rgba(60, 40, 25, 0.1),
+    0 12px 28px -10px rgba(60, 40, 25, 0.16);
   --shadow-s: 0 2px 8px rgba(60, 40, 25, 0.05);
   --shadow-m: 0 10px 30px -12px rgba(60, 40, 25, 0.16);
   --shadow-l: 0 26px 60px -22px rgba(60, 40, 25, 0.26);
@@ -47,10 +52,12 @@
 
   --font-display: var(--ff-display); /* font tiêu đề  (Quicksand) */
   --font-sans: var(--ff-body); /* font nội dung (Nunito)    */
+  --font-banner: var(--ff-banner); /* chữ lớn trên banner (Playfair) */
 
   --shadow-s: var(--shadow-s);
   --shadow-m: var(--shadow-m);
   --shadow-l: var(--shadow-l);
+  --shadow-header: var(--shadow-header);
 }
 
 /* ========================================================================== */
@@ -88,9 +95,33 @@ h4 {
   border-radius: 8px;
 }
 
-/* Bút highlight vẽ dưới chữ ở tiêu đề lớn */
+/* Con trỏ bàn tay cho mọi thứ bấm được.
+   Tailwind v4 không đặt cursor cho <button> nữa, mà mặc định của trình duyệt
+   là mũi tên — rê vào không biết là bấm được. Khai báo gọn một lần ở đây để
+   khỏi phải nhớ gắn class cursor-pointer cho từng nút. */
+@layer base {
+  a[href],
+  button,
+  [role="button"],
+  label[for],
+  summary,
+  select {
+    cursor: pointer;
+  }
+
+  :disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+}
+
+/* Bút highlight vẽ dưới chữ ở tiêu đề lớn.
+   isolation: isolate là bắt buộc — vệt bút nằm ở z-index -1, nếu .marker
+   không tự tạo lớp riêng thì trên phần có nền (khu sản phẩm dùng bg-alt)
+   vệt sẽ chui xuống dưới nền và mất tiêu. */
 .marker {
   position: relative;
+  isolation: isolate;
   white-space: nowrap;
 }
 .marker::after {
@@ -106,23 +137,103 @@ h4 {
   z-index: -1;
 }
 
-/* Đường khâu nét đứt hiện lên khi rê chuột vào thẻ sản phẩm */
-.stitch::after {
-  content: "";
-  position: absolute;
-  inset: 9px;
-  border: 2px dashed var(--accent);
-  border-radius: 24px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-  z-index: 2;
+/* Tên sản phẩm trong thẻ — rê chuột thì vệt bút nhớ hồng đào loang từ trái
+   sang, cùng ngôn ngữ với .marker ở tiêu đề lớn. Dùng background chứ không
+   dùng ::after để tên xuống dòng mấy dòng vẫn có vệt màu ở từng dòng. */
+.title-swipe {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--accent) 48%, transparent),
+    color-mix(in srgb, var(--accent) 48%, transparent)
+  );
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 0 0.32em;
+  transition: background-size 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
-.group:hover .stitch::after {
-  opacity: 0.5;
+.group:hover .title-swipe {
+  background-size: 100% 0.32em;
 }
 
-/* Băng chữ chạy ngang */
+/* ==========================================================================
+   MÀU NHÃN DANH MỤC — mỗi danh mục một tông pastel riêng
+   Nhãn .cat-badge (dùng trong khung xem ảnh lớn) có nền ĐỤC, không dùng màu
+   trong suốt, để đặt chồng lên tấm ảnh nào cũng đọc được. Thẻ sản phẩm thì
+   dùng .cat-eyebrow — chỉ mượn màu chữ, không nền, không viền.
+   Mỗi bộ ba màu: --cat-bg nền, --cat-bd viền, --cat-ink chữ.
+   Màu chữ đã chỉnh để đạt tối thiểu 5:1 trên nền của chính nó (chuẩn WCAG AA).
+   Thêm danh mục mới trong data/products.json thì chép thêm một khối
+   .cat-<slug> y hệt bên dưới; quên chép thì nhãn tự về màu trắng mặc định.
+   ========================================================================== */
+/* Dòng dẫn danh mục trên tên sản phẩm: chấm tròn + chữ, cùng màu --cat-ink
+   của danh mục. Không nền không viền nên nhẹ hơn hẳn cái nhãn tròn cũ. */
+.cat-eyebrow {
+  color: var(--cat-ink, var(--accent-3));
+}
+.cat-eyebrow::before {
+  content: "";
+  flex: none;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.cat-badge {
+  background: var(--cat-bg, var(--card));
+  border: 2px solid var(--cat-bd, var(--border));
+  color: var(--cat-ink, var(--ink));
+}
+
+/* Móc khóa & Charm — hồng đào */
+.cat-moc-khoa {
+  --cat-bg: #fbe7e3;
+  --cat-bd: #efc7bf;
+  --cat-ink: #9a4b3e;
+}
+
+/* Thú bông Amigurumi — vàng mật */
+.cat-thu-bong {
+  --cat-bg: #faedd3;
+  --cat-bd: #e9d4a2;
+  --cat-ink: #825c14;
+}
+
+/* Túi & Ví — xanh rêu */
+.cat-tui-vi {
+  --cat-bg: #e7f0e3;
+  --cat-bd: #c7dcc0;
+  --cat-ink: #4b6a42;
+}
+
+/* Quần áo — xanh ngọc */
+.cat-quan-ao {
+  --cat-bg: #dfeeec;
+  --cat-bd: #bbd9d5;
+  --cat-ink: #3d6a64;
+}
+
+/* Phụ kiện — xanh biển */
+.cat-phu-kien {
+  --cat-bg: #e3ecf4;
+  --cat-bd: #c2d6e6;
+  --cat-ink: #3c6280;
+}
+
+/* Hoa len & Quà tặng — tím lavender */
+.cat-hoa-qua-tang {
+  --cat-bg: #ece6f3;
+  --cat-bd: #d3c8e2;
+  --cat-ink: #61508a;
+}
+
+/* ==========================================================================
+   BĂNG CHỮ CHẠY NGANG
+   Một dải ruy băng khâu nét đứt: nền phớt hồng, chữ nhỏ giãn ly ti chạy chậm
+   và tan dần ở hai mép thay vì bị cắt cụt. Màu lấy thẳng từ --accent nên đổi
+   bảng màu ở đầu file là dải băng đổi theo.
+   ========================================================================== */
 @keyframes marquee-slide {
   to {
     transform: translateX(-50%);
@@ -130,6 +241,39 @@ h4 {
 }
 .animate-marquee {
   animation: marquee-slide 26s linear infinite;
+}
+
+.marquee-band {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 15%, var(--bg)),
+    color-mix(in srgb, var(--accent-2) 13%, var(--bg))
+  );
+  border-top: 2px dashed color-mix(in srgb, var(--accent) 60%, var(--bg));
+  border-bottom: 2px dashed color-mix(in srgb, var(--accent) 60%, var(--bg));
+}
+
+/* Rê chuột vào thì dừng lại cho kịp đọc */
+.marquee-band:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+/* Chữ mờ dần ở hai mép — nền và đường khâu vẫn chạy suốt chiều ngang */
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
 }
 
 /* Ảnh sản phẩm lơ lửng ở đầu trang */
@@ -185,6 +329,39 @@ h4 {
 }
 .animate-fade-in {
   animation: fade-in 0.22s ease-out both;
+}
+
+/* ==========================================================================
+   POPUP CHI TIẾT SẢN PHẨM
+   Tấm thẻ bung nhẹ ra giữa màn hình, khổ nào cũng vậy.
+   ========================================================================== */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-modal-in {
+  animation: modal-in 0.32s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+/* Ảnh mới nhoè hiện lên mỗi lần bấm Trước / Tiếp */
+@keyframes photo-in {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-photo-in {
+  animation: photo-in 0.42s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 /* Thanh danh mục cuộn ngang trên điện thoại — giấu thanh cuộn cho gọn */

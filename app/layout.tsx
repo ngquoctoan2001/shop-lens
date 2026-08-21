@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Quicksand, Nunito } from "next/font/google";
+import { Quicksand, Nunito, Playfair_Display } from "next/font/google";
 import { site } from "@/site.config";
 import "./globals.css";
 
@@ -20,6 +20,15 @@ const body = Nunito({
   subsets: ["latin", "vietnamese"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--ff-body",
+  display: "swap",
+});
+
+/** Font chữ lớn trên banner — serif, có cả kiểu nghiêng */
+const banner = Playfair_Display({
+  subsets: ["latin", "vietnamese"],
+  weight: ["600", "700", "800"],
+  style: ["normal", "italic"],
+  variable: "--ff-banner",
   display: "swap",
 });
 
@@ -63,7 +72,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="vi" className={`${display.variable} ${body.variable}`}>
+    <html lang="vi" className={`${display.variable} ${body.variable} ${banner.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

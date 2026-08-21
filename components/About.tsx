@@ -1,4 +1,5 @@
 import { categories } from "@/lib/products";
+import SectionHeading from "./SectionHeading";
 
 const STEPS = [
   {
@@ -22,14 +23,16 @@ export default function About() {
   return (
     <section id="ve-shop" className="py-14 md:py-20">
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
-        <div className="mx-auto mb-10 max-w-[620px] text-center">
-          <span className="mb-3 inline-block text-[12.5px] font-extrabold uppercase tracking-[0.19em] text-accent-3">
-            Đặt hàng thế nào
-          </span>
-          <h2 className="text-[clamp(29px,4vw,44px)] font-semibold tracking-[-0.025em]">
-            Ba bước là có bạn nhỏ của riêng mình
-          </h2>
-        </div>
+        <SectionHeading
+          className="mb-10"
+          eyebrow="Đặt hàng thế nào"
+          title={
+            <>
+              <span className="marker">Ba bước</span> là có bạn nhỏ của riêng
+              mình
+            </>
+          }
+        />
 
         <ol className="grid gap-4 md:grid-cols-3 md:gap-6">
           {STEPS.map((s) => (
@@ -39,11 +42,11 @@ export default function About() {
             >
               <span
                 aria-hidden="true"
-                className="mb-4 grid size-12 place-items-center rounded-2xl bg-bg-alt font-display text-xl font-semibold text-accent-3"
+                className="mb-4 grid size-12 place-items-center rounded-2xl bg-bg-alt font-display text-xl font-bold text-accent-3"
               >
                 {s.n}
               </span>
-              <h3 className="mb-2 text-xl font-semibold">{s.title}</h3>
+              <h3 className="mb-2 text-xl font-bold">{s.title}</h3>
               <p className="font-medium text-ink-soft">{s.body}</p>
             </li>
           ))}

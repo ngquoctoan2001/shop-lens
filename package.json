@@ -1,12 +1,13 @@
 {
-  "name": "lennhasuen",
+  "name": "shop-lens",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "tach-nen": "python scripts/tach-nen.py"
   },
   "dependencies": {
     "next": "16.3.1",

@@ -15,8 +15,13 @@ export const site = {
   /** Đổi thành tên miền thật khi lên web, vd "https://lennhasuen.vn" */
   url: "https://lennhasuen.vn",
 
-  /** Băng chữ chạy trên cùng trang */
-  announcement: "Nhận đặt móc theo yêu cầu · Giao toàn quốc",
+  /** Các mục điều hướng — dùng chung cho menu đầu trang và chân trang */
+  nav: [
+    { label: "Trang chủ", href: "#top" },
+    { label: "Sản phẩm", href: "#san-pham" },
+    { label: "Về shop", href: "#ve-shop" },
+    { label: "Liên hệ", href: "#lien-he" },
+  ],
 
   contact: {
     /** Số Zalo — chỉ ghi số, không dấu cách */

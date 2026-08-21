@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { categories, products, type Product } from "@/lib/products";
 import ProductCard from "./ProductCard";
+import SectionHeading from "./SectionHeading";
 import Lightbox from "./Lightbox";
 
 const ALL = "tat-ca";
@@ -10,6 +11,21 @@ const ALL = "tat-ca";
 export default function Gallery() {
   const [active, setActive] = useState<string>(ALL);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  // Bấm một banner ở dải trên sẽ đổi địa chỉ thành "#san-pham=thu-bong".
+  // Đọc phần sau dấu "=" để lọc đúng danh mục đó.
+  useEffect(() => {
+    const applyHash = () => {
+      const slug = window.location.hash.split("=")[1];
+      if (slug && categories.some((c) => c.slug === slug)) {
+        setActive(slug);
+        setOpenIndex(null);
+      }
+    };
+    applyHash();
+    window.addEventListener("hashchange", applyHash);
+    return () => window.removeEventListener("hashchange", applyHash);
+  }, []);
 
   // Danh sách đang hiển thị — popup cũng chạy trên đúng danh sách này,
   // nên bấm "Tiếp" chỉ chuyển trong danh mục đang chọn.
@@ -31,20 +47,26 @@ export default function Gallery() {
     setOpenIndex(null); // đổi danh mục thì đóng popup cho khỏi lệch ảnh
   };
 
+  // Khu sản phẩm dùng nền kem đậm (--bg-alt) + hai đường kẻ trên dưới để tách
+  // hẳn khỏi khối "Về shop" ngay bên dưới — trước đó hai phần trôi liền một
+  // dải kem, nhìn không rõ đâu là hết sản phẩm. Nền đậm hơn cũng làm thẻ sản
+  // phẩm nền trắng nổi rõ hơn.
   return (
-    <section id="san-pham" className="py-14 md:py-20">
+    <section
+      id="san-pham"
+      className="border-y-2 border-border bg-bg-alt py-14 md:py-20"
+    >
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
-        <div className="mx-auto mb-10 max-w-[620px] text-center">
-          <span className="mb-3 inline-block text-[12.5px] font-extrabold uppercase tracking-[0.19em] text-accent-3">
-            Bộ sưu tập
-          </span>
-          <h2 className="text-[clamp(29px,4vw,44px)] font-semibold tracking-[-0.025em]">
-            Bạn nhỏ nào cũng dễ thương
-          </h2>
-          <p className="mt-3.5 font-medium text-ink-soft">
-            Bấm vào ảnh để xem lớn hơn — ưng mẫu nào nhắn Zalo hoặc Messenger nhé.
-          </p>
-        </div>
+        <SectionHeading
+          className="mb-10"
+          eyebrow="Bộ sưu tập"
+          title={
+            <>
+              Bạn nhỏ nào cũng <span className="marker">dễ thương</span>
+            </>
+          }
+          desc="Bấm vào ảnh để xem lớn hơn — ưng mẫu nào nhắn Zalo hoặc Messenger nhé."
+        />
 
         {/* Thanh danh mục — cuộn ngang được trên điện thoại */}
         <div

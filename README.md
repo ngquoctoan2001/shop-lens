@@ -80,13 +80,13 @@ Toàn bộ màu nằm trong khối `:root` ở đầu file, mỗi dòng có ghi 
 
 ### 5. Đổi font → `app/layout.tsx`
 
-Đang dùng **Baloo 2** (tiêu đề) + **Nunito** (nội dung).
+Đang dùng **Quicksand** (tiêu đề) + **Nunito** (nội dung).
 
 > **Quan trọng:** font thay thế bắt buộc phải có `subsets: ["latin", "vietnamese"]`.
 > Thiếu `vietnamese` thì các chữ `ữ ũ ơ ậ ợ` sẽ rơi về font dự phòng và trông
 > lệch hẳn — đây chính là lỗi của font Fredoka lúc đầu.
 >
-> Font tròn dễ thương **có** tiếng Việt: `Baloo_2`, `Quicksand`, `Comfortaa`,
+> Font tròn dễ thương **có** tiếng Việt: `Quicksand`, `Baloo_2`, `Comfortaa`,
 > `Nunito`, `Be_Vietnam_Pro`, `Lexend`.
 > Font **không có** tiếng Việt, đừng dùng: `Fredoka`, `Varela Round`, `Comic Neue`.
 
@@ -103,7 +103,9 @@ components/
   Header.tsx        thanh trên cùng, dính khi cuộn, menu điện thoại
   Hero.tsx          màn hình đầu tiên
   Marquee.tsx       dải băng chữ chạy
+  BannerStrip.tsx   dải 6 banner danh mục (khung trống nếu chưa có ảnh)
   Gallery.tsx       lọc danh mục + lưới sản phẩm  (điều khiển popup)
+  ContactButtons.tsx cặp nút Zalo / Messenger (dùng chung 3 nơi)
   ProductCard.tsx   thẻ một sản phẩm
   Lightbox.tsx      popup xem ảnh lớn
   About.tsx         ba bước đặt hàng
@@ -111,9 +113,13 @@ components/
   Footer.tsx        chân trang
 lib/products.ts     đọc products.json, đếm số lượng theo danh mục
 data/products.json  toàn bộ sản phẩm
-public/images/      54 ảnh sản phẩm
+public/images/      54 ảnh sản phẩm (ảnh gốc)
+public/cutouts/     54 ảnh sản phẩm đã tách nền (WebP trong suốt)
+public/banners/     6 ảnh banner danh mục — tự bỏ vào
+scripts/tach-nen.py script tách nền ảnh sản phẩm
 demo/               4 bản demo bảng màu (chỉ để tham khảo, không lên web)
 site.config.ts      thông tin shop + link liên hệ
+PROMPT-BANNER.md    6 prompt nhờ AI vẽ banner + danh sách ảnh cần tải lên
 ```
 
 ---
@@ -129,6 +135,45 @@ Bấm vào thẻ sản phẩm bất kỳ:
 
 Popup chỉ chạy trong danh mục đang lọc — đang xem "Túi & Ví" thì bấm Tiếp chỉ
 chuyển qua các mẫu túi ví, không nhảy sang danh mục khác.
+
+---
+
+## Banner cho phần "Chọn nhóm bạn thích"
+
+Trang chủ có một dải 6 banner cuộn ngang, mỗi danh mục một tấm. Banner nào chưa
+có ảnh thì hiện khung nét đứt nhắc tên file cần đặt.
+
+### Thêm banner
+
+1. Tạo ảnh **1920×1080 (tỉ lệ 16:9)**
+2. Đặt tên đúng theo slug danh mục: `moc-khoa.jpg`, `thu-bong.jpg`,
+   `tui-vi.jpg`, `quan-ao.jpg`, `phu-kien.jpg`, `hoa-qua-tang.jpg`
+3. Thả vào `public/banners/`
+
+Banner tự hiện, không phải sửa code. Chưa đủ 6 cái cũng không sao — cái nào có
+ảnh thì hiện ảnh, cái nào chưa thì vẫn là khung trống.
+
+### Prompt để nhờ AI vẽ banner
+
+Xem file **`PROMPT-BANNER.md`** ở thư mục gốc: có sẵn 6 prompt chi tiết, kèm
+danh sách ảnh sản phẩm cần tải lên cho từng prompt.
+
+### Ảnh sản phẩm đã tách nền
+
+`public/cutouts/` chứa 54 ảnh sản phẩm đã xoá nền (WebP, nền trong suốt) — dùng
+làm ảnh mẫu đưa cho AI, hoặc kéo thả thẳng vào Canva để tự ghép banner.
+
+Sau khi thêm ảnh sản phẩm mới, chạy lệnh này để tách nền cho ảnh mới:
+
+```bash
+npm run tach-nen
+```
+
+Ảnh nào đã tách rồi thì script tự bỏ qua. Muốn làm lại từ đầu thì xoá thư mục
+`public/cutouts/` rồi chạy lại.
+
+> Lần chạy đầu tiên tải về một mô hình AI nặng khoảng 180 MB (chỉ tải một lần).
+> Toàn bộ xử lý chạy trên máy, ảnh không gửi đi đâu cả.
 
 ---
 

@@ -42,3 +42,6 @@ next-env.d.ts
 
 # demo bang mau (khong can deploy)
 /demo
+
+# anh banner xuat ra (tao lai duoc bang: npm run banner)
+/banners-xuat

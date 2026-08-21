@@ -11,12 +11,17 @@ type Props = {
 
 export default function ProductCard({ product, onOpen, eager }: Props) {
   return (
-    <article className="group relative">
+    // Lưới kéo <article> cao bằng ô cao nhất trong hàng, nhưng cái nút bên
+    // trong thì không tự cao theo. Cho <article> thành flex để nút được kéo
+    // giãn đầy — nhờ vậy các thẻ cùng hàng mới bằng nhau.
+    <article className="group relative flex">
       <button
         type="button"
         onClick={onOpen}
         aria-label={`Xem ảnh lớn: ${product.name}`}
-        className="stitch relative block w-full overflow-hidden rounded-[24px] border-2 border-border bg-card text-left shadow-[var(--shadow-s)] transition-[transform,box-shadow,border-color] duration-300 ease-[cubic-bezier(.34,1.4,.64,1)] hover:-translate-y-2 hover:-rotate-[0.7deg] hover:border-accent hover:shadow-[var(--shadow-l)] sm:rounded-[32px]"
+        // Viền mảnh 1px + bóng mềm, thay cho viền 2px dày cộm trước đây:
+        // trên nền kem đậm thì viền dày chỉ làm thẻ trông như bị đóng khung.
+        className="relative flex w-full flex-col overflow-hidden rounded-[24px] border border-border/80 bg-card text-left shadow-[var(--shadow-s)] transition-[transform,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1.5 hover:border-accent/60 hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
       >
         <div className="relative aspect-square overflow-hidden bg-bg-alt">
           <Image
@@ -25,24 +30,50 @@ export default function ProductCard({ product, onOpen, eager }: Props) {
             fill
             loading={eager ? "eager" : "lazy"}
             sizes="(max-width: 520px) 45vw, (max-width: 1024px) 33vw, 280px"
-            className="object-cover transition-transform duration-[550ms] ease-[cubic-bezier(.2,.7,.3,1)] group-hover:scale-[1.07]"
+            className="object-cover transition-transform duration-[900ms] ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-[1.06]"
           />
-          <span className="absolute left-2.5 top-2.5 z-[3] rounded-full bg-card px-2.5 py-1.5 text-[10px] font-extrabold shadow-[var(--shadow-s)] sm:left-3 sm:top-3 sm:px-3 sm:text-[11.5px]">
-            {product.categoryName}
-          </span>
         </div>
 
-        <div className="px-3.5 pb-4 pt-3.5 sm:px-5 sm:pb-5 sm:pt-[18px]">
-          <h3 className="mb-1 text-[15.5px] font-semibold sm:text-[19px]">
-            {product.name}
+        {/* Một nhịp giãn cách duy nhất bằng gap, thay cho mỗi dòng một mb-*
+            mỗi kiểu. Dòng cuối đẩy xuống đáy bằng mt-auto nên các thẻ cùng
+            hàng đều thẳng chân. */}
+        <div className="flex flex-1 flex-col gap-2 p-4 sm:gap-2.5 sm:p-5">
+          {/* Danh mục dời từ nhãn đè lên ảnh xuống thành dòng dẫn ở đây: ảnh
+              sạch hẳn, mà thứ tự đọc lại rõ — danh mục → tên → mô tả → hành
+              động. Màu chữ lấy từ --cat-ink của chính danh mục đó. */}
+          <span
+            className={`cat-eyebrow cat-${product.categorySlug} inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em]`}
+          >
+            {product.categoryName}
+          </span>
+
+          {/* Quicksand chỉ có tới weight 700 nên giữ font-bold. Đặt
+              font-extrabold là trình duyệt bôi đậm giả, chữ bệt nhòe.
+              text-balance chia đều hai dòng, khỏi rớt lại một chữ lẻ loi. */}
+          <h3 className="text-balance text-[16px] font-bold leading-[1.25] sm:text-[20px]">
+            <span className="title-swipe">{product.name}</span>
           </h3>
-          <p className="mb-2.5 text-[12px] font-semibold text-ink-soft sm:mb-3.5 sm:text-[13.5px]">
+
+          <p className="text-pretty text-[13px] font-medium leading-[1.55] text-ink-soft sm:text-[14px]">
             {product.desc}
           </p>
-          <span className="inline-flex items-center gap-1.5 text-[12.5px] font-extrabold text-ring sm:text-sm">
-            Xem chi tiết
-            <ArrowRightIcon className="size-4 transition-transform duration-250 group-hover:translate-x-1" />
-          </span>
+
+          {/* Chữ "Xem chi tiết" trơ trọi trông như link chưa làm xong. Ghép
+              thêm nút tròn mũi tên ở góc phải cho thẻ có điểm neo rõ ràng. */}
+          <div className="mt-auto flex items-center gap-3 pt-1.5">
+            {/* Máy hẹp dưới 360px thì thẻ chỉ còn ~105px bề ngang, chữ này bị
+                ép xuống hai dòng trông rất luộm thuộm — ẩn đi, để một mình
+                nút mũi tên làm dấu hiệu bấm được. */}
+            <span className="hidden text-[12px] font-extrabold text-ink-soft min-[360px]:inline sm:text-[14px]">
+              Xem chi tiết
+            </span>
+            <span
+              aria-hidden="true"
+              className="ml-auto grid size-9 shrink-0 place-items-center rounded-full bg-bg-alt text-ink transition-[background-color,color] duration-300 group-hover:bg-ink group-hover:text-bg sm:size-10"
+            >
+              <ArrowRightIcon className="size-4 transition-transform duration-500 ease-[cubic-bezier(.22,.61,.36,1)] group-hover:translate-x-0.5" />
+            </span>
+          </div>
         </div>
       </button>
     </article>
