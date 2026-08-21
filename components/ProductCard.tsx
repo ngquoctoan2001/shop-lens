@@ -5,16 +5,19 @@ import { ArrowRightIcon } from "./Icons";
 type Props = {
   product: Product;
   onOpen: () => void;
+  /** Lớp gắn thêm vào <article> — Gallery dùng để chạy hiệu ứng hiện lên
+      cho mấy thẻ vừa mở thêm ở nút "Xem tiếp" */
+  className?: string;
 };
 
-export default function ProductCard({ product, onOpen }: Props) {
+export default function ProductCard({ product, onOpen, className = "" }: Props) {
   return (
     // Lưới kéo <article> cao bằng ô cao nhất trong hàng, nhưng cái nút bên
     // trong thì không tự cao theo. Cho <article> thành flex để nút được kéo
     // giãn đầy — nhờ vậy các thẻ cùng hàng mới bằng nhau.
     // hover:z-10: thẻ phóng to lên 1.03 sẽ tràn qua thẻ bên cạnh, không nâng
     // z-index thì mép nó chui xuống dưới thẻ đứng sau trong lưới.
-    <article className="group relative flex hover:z-10">
+    <article className={`group relative flex hover:z-10 ${className}`}>
       <button
         type="button"
         onClick={onOpen}

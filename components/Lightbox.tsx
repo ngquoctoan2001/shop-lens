@@ -194,7 +194,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
           type="button"
           onClick={onClose}
           aria-label="Đóng"
-          className="absolute right-3 top-3 z-30 grid size-10 place-items-center rounded-full bg-card/95 text-ink shadow-[var(--shadow-m)] backdrop-blur transition-transform duration-200 hover:scale-110 md:right-4 md:top-4 md:size-11"
+          className="absolute right-2 top-2 z-30 grid size-10 place-items-center rounded-full bg-card/95 text-ink shadow-[var(--shadow-m)] backdrop-blur transition-transform duration-200 hover:scale-110 md:right-4 md:top-4 md:size-11"
         >
           <CloseIcon className="size-[18px] md:size-5" />
         </button>

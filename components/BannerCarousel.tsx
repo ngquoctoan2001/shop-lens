@@ -11,6 +11,8 @@ export type BannerCard = {
   name: string;
   count: number;
   image: string;
+  /** màu chữ đè lên ảnh, chọn riêng cho từng banner (xem lib/banners.ts) */
+  mauChu: string;
   /** ảnh đã nằm trong public/banners/ chưa — kiểm tra lúc dựng trang */
   coAnh: boolean;
 };
@@ -25,11 +27,14 @@ const CHO_LANG = 120;
 const SO_BAN = 3;
 /** Bản đứng giữa — chỗ neo, lúc nào cũng kéo người xem về quanh đây */
 const BAN_GIUA = 1;
+/** Rê chuột quá bao nhiêu px thì mới tính là kéo dải, chưa tới thì vẫn là bấm */
+const NGUONG_KEO = 4;
 
 /**
  * Số đo của khung cuộn, đo một lần rồi nhớ lại.
  *
- * `moc[i]` là chỗ cần cuộn tới để tấm thứ i nằm sát lề trái khung.
+ * `moc[i]` là chỗ cần cuộn tới để tấm thứ i về đúng chỗ nó phải dừng — giữa
+ * khung hay sát lề trái là tuỳ scroll-snap-align của tấm (xem doKhung).
  * `cuoiDuong` là chỗ cuộn xa nhất có thể.
  *
  * Vì sao phải nhớ: getComputedStyle và offsetLeft đều bắt trình duyệt tính
@@ -51,12 +56,30 @@ const doKhung = (track: HTMLElement): SoDo => {
   // đi mép trong bên trái của khung (viền + lề).
   const goc = track.getBoundingClientRect().left + track.clientLeft;
   const truot = track.scrollLeft;
+
+  // Tấm dừng ở giữa khung hay dừng sát mép trái là do CSS quyết: điện thoại
+  // snap-center (mỗi lần một tấm, nằm giữa màn), từ sm trở lên snap-start
+  // (mấy tấm xếp cạnh nhau). Đọc ngược lại từ CSS chứ đừng ghi cứng bên này —
+  // ghi cứng thì hôm nào sửa lớp Tailwind là chấm tròn với tự chạy nhắm lệch
+  // chỗ ngay, mà lỗi kiểu đó rất khó lần ra.
+  //
+  // scroll-snap-align viết được hai giá trị "<khối> <dòng>"; khung này cuộn
+  // ngang nên phần mình cần là giá trị DÒNG, tức giá trị cuối.
+  const dau = track.firstElementChild;
+  const canh = dau
+    ? getComputedStyle(dau).scrollSnapAlign.trim().split(/\s+/)
+    : [];
+  const canGiua = canh[canh.length - 1] === "center";
+  const nuaKhung = track.clientWidth / 2;
+
   return {
-    moc: Array.from(
-      track.children,
-      (con) =>
-        truot + (con as HTMLElement).getBoundingClientRect().left - goc - le,
-    ),
+    moc: Array.from(track.children, (con) => {
+      const o = (con as HTMLElement).getBoundingClientRect();
+      const trai = truot + o.left - goc;
+      // Căn giữa: kéo sao cho TÂM tấm trùng tâm khung.
+      // Căn mép: kéo sao cho mép trái tấm về sát lề trong của khung.
+      return canGiua ? trai + o.width / 2 - nuaKhung : trai - le;
+    }),
     cuoiDuong: track.scrollWidth - track.clientWidth,
   };
 };
@@ -136,9 +159,11 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     return () => window.removeEventListener("resize", boNho);
   }, []);
 
-  /* --- Cuộn tới tấm thứ i của dải đã chép, cho mép trái nó về sát lề khung ---
-     Không canh vào GIỮA khung cuộn được: khung rộng hết màn hình nên canh
-     giữa là banner nhảy lệch hẳn so với lúc đứng yên (màn 1920 lệch 302px). */
+  /* --- Cuộn tới tấm thứ i của dải đã chép, về đúng chỗ nó phải dừng ---
+     Điện thoại thì tấm dừng giữa màn, từ sm trở lên thì dừng sát lề trái.
+     Không tự quyết ở đây — doKhung đã đọc scroll-snap-align rồi tính sẵn mốc,
+     nên chỗ mình nhắm tới luôn trùng khít điểm snap của trình duyệt. Lệch một
+     tí là cuộn xong nó tự kéo giật thêm một nhịp nữa, nhìn rất cợn. */
   const den = useCallback(
     (i: number) => {
       const track = trackRef.current;
@@ -318,6 +343,10 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
   const batDauLuot = (e: React.PointerEvent<HTMLDivElement>) => {
     clearTimeout(hoiSuc.current);
     setVuaLuot(true);
+    // Bấm phát mới thì xoá dấu "vừa kéo" của phát cũ. Xoá cho mọi loại con
+    // trỏ, kể cả ngón tay: máy màn cảm ứng dùng lẫn chuột với tay, kéo bằng
+    // chuột xong mà cú chạm kế tiếp còn thấy dấu cũ là nó bị nuốt oan.
+    keo.current.daDiChuyen = false;
 
     if (e.pointerType !== "mouse") return;
     const track = trackRef.current;
@@ -328,37 +357,65 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
       tuScroll: track.scrollLeft,
       daDiChuyen: false,
     };
-    // Kéo tay mà vẫn bật scroll-snap thì nó giật về liên tục, tắt tạm.
-    track.style.scrollSnapType = "none";
-    // Nhả chuột quá nhanh thì con trỏ không còn để mà giữ — kệ, kéo vẫn chạy
-    try {
-      track.setPointerCapture(e.pointerId);
-    } catch {
-      /* không giữ được con trỏ thì thôi */
+    // Chưa giữ con trỏ, chưa tắt snap ở đây — đợi tay đi thật rồi mới làm.
+    // Lý do nằm ở dangLuot.
+  };
+
+  /** Dọn dẹp sau một lượt kéo chuột: trả con trỏ, bật snap, dời dải về giữa */
+  const ketThucKeo = (pointerId: number) => {
+    const track = trackRef.current;
+    if (!keo.current.dang || !track) return;
+    keo.current.dang = false;
+    if (track.hasPointerCapture(pointerId)) {
+      track.releasePointerCapture(pointerId);
     }
+    // Bật snap lại là trình duyệt tự bắt về tấm gần nhất.
+    track.style.scrollSnapType = "";
+    // Nhả tay xong mới tới lượt dời dải — lúc kéo thì veBanGiua tự né.
+    veBanGiua();
   };
 
   const dangLuot = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!keo.current.dang) return;
     const track = trackRef.current;
     if (!track) return;
+
+    // Nhả chuột ở ngoài dải trong lúc chưa giữ con trỏ thì không có pointerup
+    // nào chạy tới đây. Thấy nút chuột đã nhả từ lúc nào là tự dọn, kẻo lần
+    // sau rê chuột ngang qua dải là nó tưởng đang kéo dở rồi cuốn theo tay.
+    if (e.buttons === 0) {
+      ketThucKeo(e.pointerId);
+      return;
+    }
+
     const lech = e.clientX - keo.current.tuX;
-    if (Math.abs(lech) > 4) keo.current.daDiChuyen = true;
+
+    // Chỉ khi tay đi quá NGUONG_KEO mới coi là kéo dải — và cũng chỉ tới lúc
+    // đó mới giữ con trỏ.
+    //
+    // Giữ con trỏ ngay từ lúc bấm xuống (bản cũ) thì hỏng chuyện bấm banner:
+    // trình duyệt bẻ luôn cả pointerup lẫn mouseup về khung cuộn, nên cú click
+    // sinh ra sau đó nhận khung cuộn làm đích chứ không phải thẻ <a> nữa —
+    // onClick của banner không bao giờ chạy, mà trình duyệt cũng chẳng nhảy
+    // theo href. Bấm vào banner y như bấm vào chỗ trống.
+    if (!keo.current.daDiChuyen) {
+      if (Math.abs(lech) <= NGUONG_KEO) return;
+      keo.current.daDiChuyen = true;
+      // Kéo tay mà vẫn bật scroll-snap thì nó giật về liên tục, tắt tạm.
+      track.style.scrollSnapType = "none";
+      // Giờ mới giữ con trỏ, để kéo ra ngoài dải vẫn chạy tiếp.
+      try {
+        track.setPointerCapture(e.pointerId);
+      } catch {
+        /* không giữ được con trỏ thì thôi, kéo trong lòng dải vẫn được */
+      }
+    }
+
     track.scrollLeft = keo.current.tuScroll - lech;
   };
 
   const thoiLuot = (e: React.PointerEvent<HTMLDivElement>) => {
-    const track = trackRef.current;
-    if (keo.current.dang && track) {
-      keo.current.dang = false;
-      if (track.hasPointerCapture(e.pointerId)) {
-        track.releasePointerCapture(e.pointerId);
-      }
-      // Bật snap lại là trình duyệt tự bắt về tấm gần nhất.
-      track.style.scrollSnapType = "";
-      // Nhả tay xong mới tới lượt dời dải — lúc kéo thì veBanGiua tự né.
-      veBanGiua();
-    }
+    ketThucKeo(e.pointerId);
     hoiSuc.current = setTimeout(() => setVuaLuot(false), NGHI_SAU_KHI_LUOT);
   };
 
@@ -411,7 +468,11 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
         onPointerCancel={thoiLuot}
         onClickCapture={chanBamNham}
         onDragStart={(e) => e.preventDefault()}
-        className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-4 overflow-x-auto pb-4 active:cursor-grabbing sm:gap-5"
+        // Khe hở trên điện thoại rộng hẳn 32px, không phải cho đẹp mà để đẩy
+        // tấm kế ra hẳn ngoài màn: tấm rộng (100vw - 32px) căn giữa thì mỗi
+        // bên còn chừa 16px, cộng thêm khe 32px nữa là tấm bên cạnh bắt đầu ở
+        // 100vw + 16px — khuất hẳn. Khe này nằm ngoài màn nên không ai thấy.
+        className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-8 overflow-x-auto pb-4 active:cursor-grabbing sm:gap-5"
       >
         {daiBanner.map(({ c, i, ban }) => {
           /* Bản giữa mới là bản "thật": trình đọc màn hình và phím Tab chỉ làm
@@ -428,7 +489,11 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
               aria-label={
                 that ? `Xem nhóm ${c.name} — ${c.count} mẫu` : undefined
               }
-              className="group relative w-[78vw] shrink-0 snap-start overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:rounded-[32px] lg:w-[42vw]"
+              // Điện thoại: mỗi lần đúng MỘT tấm, nằm giữa màn. Tấm rộng gần
+              // hết bề ngang (chừa 16px mỗi bên làm lề) và snap-center để nó
+              // dừng ngay chính giữa. Từ sm trở lên màn rộng rãi, quay lại
+              // kiểu cũ — xếp mấy tấm cạnh nhau, căn mép trái.
+              className="group relative w-[calc(100vw-2rem)] shrink-0 snap-center overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:snap-start sm:rounded-[32px] lg:w-[42vw]"
               style={{ aspectRatio: BANNER_RATIO }}
             >
               {c.coAnh ? (
@@ -446,24 +511,48 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
                     priority={that && i === 0}
                     loading={that && i < 3 ? "eager" : "lazy"}
                     draggable={false}
-                    sizes="(max-width: 640px) 78vw, (max-width: 1024px) 52vw, 560px"
+                    sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 52vw, 560px"
                     className="select-none object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
-                  {/* Vệt tối ở đáy để chữ đọc được trên mọi kiểu ảnh */}
+                  {/* Vệt sáng mờ ở đỉnh. Sáu ảnh đang dùng đều để trống góc
+                      trên nên không có nó chữ vẫn đọc được, nhưng chủ shop
+                      thay ảnh khác lúc nào cũng được — có vệt này thì lỡ ảnh
+                      mới có hoạ tiết đậm chạy lên đó chữ cũng không chìm. */}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 to-transparent"
+                    className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/60 via-white/20 to-transparent"
                   />
-                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
+                  {/* Chữ nằm hẳn trên góc trái, mũi tên tụt xuống góc phải
+                      dưới. Trước đây cả cụm nằm dưới đáy, đè đúng dòng chú
+                      thích in sẵn trong ảnh ("*14 bạn bông móc tay…").
+
+                      Lề tính theo phần trăm chứ không phải p-4/p-5: khung
+                      banner khoá tỉ lệ 16:9 nên lề co giãn cùng tấm ảnh, chữ
+                      luôn dừng trên khoảng 26% chiều cao — vừa đủ nằm trọn
+                      phía trên dòng chữ lớn in trong ảnh, kể cả tấm phụ kiện
+                      có chữ bắt đầu sớm nhất. */}
+                  <div
+                    className="absolute inset-0 flex flex-col justify-between p-[4%]"
+                    style={{
+                      color: c.mauChu,
+                      // Quầng trắng mỏng quanh nét chữ. Trên nền pastel phẳng
+                      // thì không ai thấy, nhưng tên danh mục dài (như "Thú
+                      // bông Amigurumi") lúc xem bằng điện thoại có chạm vào
+                      // sừng con bò / tai con heo ở mép phải — quầng này tách
+                      // nét chữ khỏi món đồ, khỏi phải kê thêm mảng nền đục.
+                      textShadow:
+                        "0 1px 2px rgba(255,255,255,.9), 0 0 10px rgba(255,255,255,.75)",
+                    }}
+                  >
                     <div>
-                      <h3 className="text-lg font-bold text-white drop-shadow-sm sm:text-xl">
+                      <h3 className="text-base font-bold leading-tight lg:text-xl">
                         {c.name}
                       </h3>
-                      <p className="text-[13px] font-bold text-white/90">
+                      <p className="text-[12px] font-bold leading-tight lg:text-[13px]">
                         {c.count} mẫu
                       </p>
                     </div>
-                    <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/90 text-ink transition-transform duration-300 group-hover:translate-x-1">
+                    <span className="grid size-9 shrink-0 select-none place-items-center self-end rounded-full bg-white/90 ring-1 ring-black/5 transition-transform duration-300 group-hover:translate-x-1">
                       <ArrowRightIcon className="size-[18px]" />
                     </span>
                   </div>

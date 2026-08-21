@@ -20,8 +20,10 @@ export default function Footer() {
   // trong components/CurrentYear.tsx.
   const namBuild = new Date().getFullYear();
 
+  // pb-28 chừa chỗ cho thanh điều hướng nổi ở đáy màn hình điện thoại; từ md
+  // trở lên không còn thanh đó nên trả về khoảng đệm thường.
   return (
-    <footer className="mt-14 border-t-2 border-border pb-7 pt-8 md:mt-16">
+    <footer className="mt-14 border-t-2 border-border pb-28 pt-8 md:mt-16 md:pb-7">
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
         <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
           <div>

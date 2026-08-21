@@ -109,6 +109,21 @@ export function ChevronRightIcon({ className = "size-6" }: IconProps) {
   );
 }
 
+/** Mũi tên xuống — nút "Xem tiếp" ở cuối lưới sản phẩm */
+export function ChevronDownIcon({ className = "size-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={2.4}
+    >
+      <path d="m5 9 7 7 7-7" />
+    </svg>
+  );
+}
+
 export function CloseIcon({ className = "size-6" }: IconProps) {
   return (
     <svg
@@ -119,20 +134,6 @@ export function CloseIcon({ className = "size-6" }: IconProps) {
       strokeWidth={2.4}
     >
       <path d="M6 6l12 12M18 6L6 18" />
-    </svg>
-  );
-}
-
-export function MenuIcon({ className = "size-6" }: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={`${base} ${className}`}
-      aria-hidden="true"
-      {...stroke}
-      strokeWidth={2.2}
-    >
-      <path d="M4 7h16M4 12h16M4 17h16" />
     </svg>
   );
 }
@@ -249,6 +250,81 @@ export function PlayIcon({ className = "size-5" }: IconProps) {
       fill="currentColor"
     >
       <path d="M8.4 5.2a1.3 1.3 0 0 1 1.98-1.11l8.1 5.05a2.2 2.2 0 0 1 0 3.73l-8.1 5.05A1.3 1.3 0 0 1 8.4 16.8Z" />
+    </svg>
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Bốn icon cho thanh điều hướng nổi ở đáy màn hình điện thoại
+   -------------------------------------------------------------------------- */
+
+/** Ngôi nhà — mục "Trang chủ" */
+export function HomeIcon({ className = "size-6" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <path d="M3.3 10.1 12 3.3l8.7 6.8v9.2a1.6 1.6 0 0 1-1.6 1.6H4.9a1.6 1.6 0 0 1-1.6-1.6Z" />
+      <path d="M9.4 20.9v-6.3h5.2v6.3" />
+    </svg>
+  );
+}
+
+/** Túi xách — mục "Sản phẩm" */
+export function BagIcon({ className = "size-6" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <path d="M5.6 7.9h12.8a1 1 0 0 1 1 1.06l-.62 10.2a1.6 1.6 0 0 1-1.6 1.5H6.82a1.6 1.6 0 0 1-1.6-1.5L4.6 8.96a1 1 0 0 1 1-1.06Z" />
+      <path d="M8.9 10.4V7.4a3.1 3.1 0 0 1 6.2 0v3" />
+    </svg>
+  );
+}
+
+/** Mặt tiền tiệm có mái hiên — mục "Về shop" */
+export function ShopIcon({ className = "size-6" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <path d="M3.2 9.6 5 4.8h14l1.8 4.8Z" />
+      <path d="M4.9 9.6v9.5a1.5 1.5 0 0 0 1.5 1.5h11.2a1.5 1.5 0 0 0 1.5-1.5V9.6" />
+      <path d="M9.7 20.6v-5.4h4.6v5.4" />
+    </svg>
+  );
+}
+
+/**
+ * Bong bóng chat viền mảnh — mục "Liên hệ".
+ *
+ * Khác ChatIcon (vẽ đặc, dành cho khuyên tròn màu mật ong): cái này vẽ nét
+ * cho hợp ba icon còn lại trên thanh. Ba chấm là ba đoạn dài bằng 0, đầu nét
+ * bo tròn nên hiện ra thành chấm.
+ */
+export function MessageIcon({ className = "size-6" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <path d="M20.5 11.7c0 4.03-3.81 7.3-8.5 7.3-.93 0-1.83-.13-2.67-.37l-4.66 1.86 1.25-3.83C4.24 15.35 3.5 13.6 3.5 11.7c0-4.03 3.81-7.3 8.5-7.3s8.5 3.27 8.5 7.3Z" />
+      <path d="M8.5 11.7h.01M12 11.7h.01M15.5 11.7h.01" strokeWidth={2.4} />
     </svg>
   );
 }

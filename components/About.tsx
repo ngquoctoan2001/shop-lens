@@ -21,7 +21,7 @@ const STEPS = [
 
 export default function About() {
   return (
-    <section id="ve-shop" className="py-14 md:py-20">
+    <section id="ve-shop" className="neo-muc py-14 md:py-20">
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
         <SectionHeading
           className="mb-10"

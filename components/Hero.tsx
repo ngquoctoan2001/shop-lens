@@ -16,7 +16,7 @@ export default function Hero() {
   );
 
   return (
-    <div id="top" className="relative overflow-hidden pb-10 pt-10 md:pt-16">
+    <div id="top" className="neo-muc relative overflow-hidden pb-10 pt-10 md:pt-16">
       {/* Ba mảng màu loang làm nền */}
       <div
         aria-hidden="true"

@@ -4,7 +4,7 @@ export default function ContactCTA() {
   return (
     <div
       id="lien-he"
-      className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]"
+      className="neo-muc mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]"
     >
       <div className="relative overflow-hidden rounded-[34px] bg-bg-deep px-6 py-12 text-center text-white sm:rounded-[44px] sm:px-11 sm:py-16">
         <div

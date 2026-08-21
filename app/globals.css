@@ -40,6 +40,13 @@
   --shadow-s: 0 2px 8px rgba(60, 40, 25, 0.05);
   --shadow-m: 0 10px 30px -12px rgba(60, 40, 25, 0.16);
   --shadow-l: 0 26px 60px -22px rgba(60, 40, 25, 0.26);
+
+  /* Chiều cao thanh đầu trang. ĐÂY LÀ CHỖ DUY NHẤT ghi con số này — Header.tsx
+     và chỗ dò mục đang xem đều đọc lại từ đây, sửa một chỗ là cả ba khớp nhau.
+     Xem thêm .neo-muc ở dưới. */
+  --cao-header: 74px;
+  /* Khoảng thở giữa mép dưới header và đỉnh khối khi nhảy tới một mục menu */
+  --le-neo-muc: 12px;
 }
 
 /* Cho Tailwind dùng được các màu trên: bg-bg, text-ink, border-border… */
@@ -76,6 +83,24 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+}
+
+/* Khối mà menu nhảy tới ("Trang chủ", "Sản phẩm", "Về shop", "Liên hệ").
+ *
+ * Thanh đầu trang dán dính đè lên đỉnh màn hình. Trình duyệt thì cứ nhảy cho
+ * đỉnh khối trùng đỉnh màn hình, nên phần đầu khối — đúng chỗ có tiêu đề —
+ * chui hẳn xuống dưới header, mất 74px. scroll-margin-top bảo nó dừng sớm lại
+ * chừng đó, cộng thêm một khoảng thở cho khỏi dính sát.
+ *
+ * Chỉ ảnh hưởng lúc CUỘN TỚI, không đụng gì tới bố cục — khối vẫn nằm y
+ * nguyên chỗ cũ.
+ *
+ * LƯU Ý: khoảng thở này phải NHỎ HƠN vạch đo trong lib/muc-dang-xem.ts. Nhảy
+ * tới xong mà đỉnh khối lại nằm dưới vạch đo thì mục vừa bấm không sáng lên,
+ * menu tô nhầm sang mục trước đó.
+ */
+.neo-muc {
+  scroll-margin-top: calc(var(--cao-header) + var(--le-neo-muc));
 }
 
 body {
@@ -186,6 +211,24 @@ h4 {
 .group:hover .stitch::after,
 .stitch:focus-visible::after {
   opacity: 0.5;
+}
+
+/* Mũi tên trên nút "Xem tiếp" nhún xuống nhè nhẹ khi rê chuột — ra ý "còn nữa
+   ở phía dưới". Biên độ 3px và chậm, đủ thấy mà không thành nhấp nháy.
+   Dùng `translate` chứ không dùng `transform` cho đồng bộ với Tailwind v4 —
+   nó cũng dịch mấy class translate/scale ra thuộc tính riêng như vậy. */
+@keyframes nhun-xuong {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 3px;
+  }
+}
+.nut-tiep:hover .mui-ten,
+.nut-tiep:focus-visible .mui-ten {
+  animation: nhun-xuong 1.1s ease-in-out infinite;
 }
 
 /* ==========================================================================

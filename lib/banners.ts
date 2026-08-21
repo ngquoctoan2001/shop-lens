@@ -19,13 +19,42 @@ export type BannerSlot = {
   count: number;
   /** đường dẫn ảnh banner cần đặt */
   image: string;
+  /** màu chữ đè lên ảnh — mỗi banner một màu, xem MAU_CHU bên dưới */
+  mauChu: string;
 };
+
+/**
+ * Màu chữ cho tên danh mục nằm đè lên ảnh banner.
+ *
+ * Trước đây chữ màu trắng nên phải kéo một vệt tối dưới đáy ảnh mới đọc nổi,
+ * mà vệt tối ấy lại phủ luôn dòng chữ in sẵn trong ảnh. Bỏ vệt tối, dời chữ
+ * lên góc trên bên trái — chỗ duy nhất cả sáu ảnh đều để trống — thì chữ
+ * trắng hết đường sống, vì nền ảnh toàn tông pastel sáng.
+ *
+ * Nên mỗi banner lấy một màu đậm cùng họ với nền của nó: đọc rõ mà không
+ * chọi màu. Số ở cuối mỗi dòng là độ tương phản với vùng nền góc trên trái
+ * của đúng ảnh đó (WCAG AA cần từ 4.5:1 trở lên).
+ *
+ * Thay ảnh banner thì nhớ ngó lại màu ở đây.
+ */
+const MAU_CHU: Record<string, string> = {
+  "moc-khoa": "#9b3f63", // nền hồng phấn   → hồng mận   5.3:1
+  "thu-bong": "#356a52", // nền xanh bạc hà → xanh rêu   5.4:1
+  "tui-vi": "#6b4630", // nền be kem      → nâu cacao  6.6:1
+  "quan-ao": "#61468f", // nền tím nhạt    → tím oải hương 6.3:1
+  "phu-kien": "#33507f", // nền vàng bơ     → xanh navy  7.0:1
+  "hoa-qua-tang": "#a34a34", // nền xanh cốm → đỏ đất    5.3:1
+};
+
+/** Thêm danh mục mới mà quên chọn màu thì dùng tạm nâu cacao của trang */
+const MAU_CHU_MAC_DINH = "#43301f";
 
 export const bannerSlots: BannerSlot[] = categories.map((c) => ({
   slug: c.slug,
   name: c.name,
   count: c.count,
   image: `/banners/${c.slug}.webp`,
+  mauChu: MAU_CHU[c.slug] ?? MAU_CHU_MAC_DINH,
 }));
 
 /**
