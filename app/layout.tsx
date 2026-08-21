@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Quicksand, Nunito, Playfair_Display } from "next/font/google";
 import { site } from "@/site.config";
+import LazyImageFix from "@/components/LazyImageFix";
 import "./globals.css";
 
 /**
@@ -97,7 +98,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="vi" className={`${display.variable} ${body.variable} ${banner.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        {/* Không vẽ ra gì cả — chỉ ngồi canh mấy tấm ảnh mà Safari bỏ quên
+            không tải. Xem chú thích dài trong chính file đó. */}
+        <LazyImageFix />
+      </body>
     </html>
   );
 }

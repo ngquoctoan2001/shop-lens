@@ -7,34 +7,66 @@
 # tam anh mot xem co gi moi khong - hon 100 luot hoi cho mot lan vao trang,
 # du chang co gi doi. May dong duoi bao trinh duyet cu dung ban da tai san.
 #
+#
+# !!! LUAT VANG: MOI DUONG DAN CHI DUOC KHAI Cache-Control O DUNG MOT KHOI !!!
+#
+# Cloudflare Pages ap TAT CA cac khoi khop voi duong dan, va hai header trung
+# ten thi no NOI LAI voi nhau chu khong de khoi hep de len khoi rong. Truoc
+# day khoi /* o cuoi file co ghi Cache-Control, thanh ra moi tam anh nhan
+# duoc dung mot dong tu mau thuan the nay:
+#
+#     Cache-Control: public, max-age=31536000, immutable, public, max-age=0, must-revalidate
+#
+# Vua bao "giu mot nam, dung hoi lai" vua bao "het han ngay, phai hoi lai".
+# Khong co chuan nao noi ro phai hieu dong nay ra sao, nen moi trinh duyet
+# doan mot kieu - va do dung la luc web chay tot tren may nay ma hong tren
+# may kia. Vi vay khoi /* duoi cung gio CHI con header bao mat, khong dung
+# toi Cache-Control nua.
+#
+# Kiem tra lai sau moi lan sua file nay:
+#     curl -sI https://<ten-web>.pages.dev/images/logo-mark.webp | grep -i cache
+# Chi duoc thay DUNG MOT cum max-age. Thay hai cum la file nay hong roi.
+#
+#
 # LUU Y khi sua anh: dat ten xong thi dung ghi de len ten cu. Ghi de thi khach
 # da tung vao web van thay anh cu ca nam. Doi anh -> doi luon ten file
 # (vd them hau to -v2) roi sua duong dan trong data/products.json.
 
-# --- Anh san pham va banner: giu vinh vien ---
+# --- Trang HTML: phai hoi lai moi lan, khong thi sua noi dung xong khach van
+# --- thay ban cu. Khai rieng cho "/" chu khong khai chung o /* - xem LUAT VANG.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+# --- Anh san pham va banner: giu mot nam ---
+# KHONG dat "immutable" o day. Ten may file anh nay do minh tu dat, khong co
+# ma bam kem theo. Lo mot may nao do luu nham ban hong thi "immutable" bat no
+# om ban hong ay tron mot nam - bam tai lai trang cung khong cuu duoc, vi
+# "immutable" nghia la "dung hoi lai, ke ca khi nguoi ta bam tai lai". Bo chu
+# do di thi luc tai lai trang trinh duyet con hoi may chu mot cau, may chu
+# tra 304 gan nhu khong ton gi, ma van co duong lui khi co su co.
 /images/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=31536000
 
 /banners/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=31536000
 
 # --- Anh chia se Facebook/Zalo: giu 7 ngay cho de doi ---
 /og.jpg
   Cache-Control: public, max-age=604800
 
 # --- File JS/CSS do Next.js sinh ra deu co ma bam trong ten, doi noi dung la
-# --- doi ten, nen giu vinh vien duoc.
+# --- doi ten file. Chi rieng cho nay "immutable" moi that su an toan: ban
+# --- hong khong bao gio dung chung ten voi ban tot.
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
-# --- Trang HTML thi nguoc lai: phai hoi lai moi lan, khong thi sua noi dung
-# --- xong khach van thay ban cu.
+# --- Header bao mat, ap cho moi duong dan.
+# --- TUYET DOI khong them Cache-Control vao khoi nay - xem LUAT VANG dau file.
 # X-Frame-Options    : chan trang bi nhung vao iframe cua web khac de lua bam
 # X-Content-Type-... : trinh duyet khong duoc tu doan kieu file
 # Referrer-Policy    : sang web khac chi gui ten mien, khong gui duong dan day du
 # Permissions-Policy : trang nay khong dung camera/micro/dinh vi
 /*
-  Cache-Control: public, max-age=0, must-revalidate
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

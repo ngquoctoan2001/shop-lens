@@ -280,12 +280,6 @@
       "desc": "Mũ, khăn, kẹp tóc, vòng tay xinh xinh",
       "products": [
         {
-          "id": "pk-01",
-          "name": "BST Quả Cam",
-          "desc": "Beret hình quả cam, kèm khay 4 quả mini và charm cam rời",
-          "image": "/images/phukien-01-mu-beret-qua-cam.webp"
-        },
-        {
           "id": "pk-02",
           "name": "Scrunchie Bèo Hồng",
           "desc": "Cột tóc bèo nhún hồng - trắng, mềm không hại tóc",
@@ -370,6 +364,12 @@
           "name": "Lót Ly Thằn Lằn Xanh",
           "desc": "Thằn lằn xanh nằm dang chân, thân tròn dẹt kê vừa đáy ly",
           "image": "/images/thubong-11-ech-xanh-nam-ngua.webp"
+        },
+        {
+          "id": "hq-09",
+          "name": "BST Quả Cam",
+          "desc": "Lót ly hình quả cam, kèm khay 4 quả mini và charm cam rời",
+          "image": "/images/phukien-01-mu-beret-qua-cam.webp"
         }
       ]
     }
