@@ -35,9 +35,28 @@ export default function ProductCard({ product, onOpen, className = "" }: Props) 
         className="stitch relative flex w-full flex-col overflow-hidden rounded-[24px] border border-card-line bg-card text-left shadow-[var(--shadow-s)] transition-[scale,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-[1.03] hover:border-accent hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
       >
         {/* Ô ảnh vuông. Giữ vuông bằng .khung-ti-le chứ không phải
-            aspect-square — luật và lý do nằm ở app/globals.css. Ba chỗ khác
-            cũng vá y hệt: Hero, BannerCarousel, Lightbox. */}
-        <div className="khung-ti-le relative overflow-hidden bg-bg-alt">
+            aspect-square — luật và lý do nằm ở app/globals.css.
+
+            w-full và shrink-0 KHÔNG phải cho đẹp, thiếu chúng là mất ảnh trên
+            Safari/iPhone. Hai lý do riêng biệt:
+
+            w-full — chiều cao ô này do miếng chêm padding-top:100% dựng lên,
+            mà padding phần trăm phải đo theo một bề ngang có thật. Không khai
+            width thì bề ngang chỉ có được nhờ flex kéo giãn (align-items:
+            stretch), tức là mãi tới giữa chừng quá trình xếp chỗ mới biết —
+            trong khi chiều cao lại cần biết trước. WebKit gặp vòng luẩn quẩn
+            đó thì trả về 0. Khai thẳng width:100% (đo theo bề ngang cái nút,
+            vốn đã biết chắc) là cắt đứt vòng đó.
+
+            shrink-0 — ô này có overflow-hidden, mà theo chuẩn flexbox thì
+            overflow khác visible sẽ hạ min-height:auto xuống 0. Nghĩa là ô
+            được phép bị bóp tới tận 0 khi flex thấy thiếu chỗ. Chặn co lại là
+            dù có tính hụt cỡ nào nó cũng không xẹp mất.
+
+            Ba chỗ vá cùng đợt — Hero, BannerCarousel, Lightbox — vốn đã khai
+            sẵn bề ngang từ trước nên không dính; đó cũng là lý do ảnh trong
+            popup vẫn hiện bình thường trong khi ảnh thẻ thì mất. */}
+        <div className="khung-ti-le relative w-full shrink-0 overflow-hidden bg-bg-alt">
           {/* Dùng bản thumb 500px chứ KHÔNG phải ảnh gốc. Ô này rộng 165px
               trên điện thoại, 274px trên máy tính — 500px là đã dư cho cả màn
               hình nét cao. Trang xuất ra web tĩnh nên <Image> không tự thu nhỏ

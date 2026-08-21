@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Quicksand, Nunito, Playfair_Display } from "next/font/google";
 import { site } from "@/site.config";
 import LazyImageFix from "@/components/LazyImageFix";
+import ChanDoan from "@/components/ChanDoan";
 import "./globals.css";
 
 /**
@@ -103,6 +104,9 @@ export default function RootLayout({
         {/* Không vẽ ra gì cả — chỉ ngồi canh mấy tấm ảnh mà Safari bỏ quên
             không tải. Xem chú thích dài trong chính file đó. */}
         <LazyImageFix />
+        {/* ĐỒ TẠM — chỉ hiện khi địa chỉ có "?chan-doan=1". Sửa xong lỗi ảnh
+            trên iPhone thì xoá dòng này và xoá file components/ChanDoan.tsx. */}
+        <ChanDoan />
       </body>
     </html>
   );
