@@ -16,11 +16,16 @@ export const site = {
    * Địa chỉ thật của web. Dùng cho thẻ chia sẻ Facebook/Zalo, sitemap và
    * robots.txt — sai chỗ này là ảnh xem trước lúc chia sẻ link không hiện.
    *
-   * Đang để tên miền miễn phí của Cloudflare Pages. Mua tên miền riêng
-   * (vd "https://lennhasuen.vn") thì sửa đúng một dòng này, mọi chỗ khác
-   * tự ăn theo.
+   * PHẢI GÕ ĐÚNG TÊN MIỀN ĐANG CHẠY. Trước đây chỗ này ghi
+   * "https://lennhasuen.pages.dev" trong khi web nằm ở shop-lens-ar8.pages.dev,
+   * nên thẻ og:image trỏ về một tên miền không tồn tại: Zalo và Facebook đi lấy
+   * ảnh không được, link chia sẻ chỉ còn chữ, mất tấm ảnh thú bông.
+   *
+   * Đang để tên miền miễn phí của Cloudflare Pages. Đổi tên dự án trên
+   * Cloudflare hoặc mua tên miền riêng (vd "https://lennhasuen.vn") thì sửa
+   * đúng một dòng này, mọi chỗ khác tự ăn theo. Không có dấu / ở cuối.
    */
-  url: "https://lennhasuen.pages.dev",
+  url: "https://shop-lens-ar8.pages.dev",
 
   /** Các mục điều hướng — dùng chung cho menu đầu trang và chân trang */
   nav: [

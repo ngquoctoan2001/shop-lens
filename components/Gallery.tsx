@@ -133,9 +133,8 @@ export default function Gallery() {
     [active],
   );
 
-  // Phần thật sự bày ra lưới. Popup cũng chạy trên đúng danh sách này, nên
-  // bấm "Tiếp" trong popup chỉ đi vòng quanh mấy mẫu đang thấy — không lôi
-  // ra mẫu mà ngoài lưới còn đang giấu.
+  // Phần thật sự bày ra lưới. Chỉ để VẼ lưới thôi — popup không đụng tới khúc
+  // cắt này, xem chú thích ở chỗ dựng Lightbox cuối file.
   const hienThi: Product[] = useMemo(
     () => (xemHet ? shown : shown.slice(0, soLuot * moiLuot)),
     [shown, xemHet, soLuot, moiLuot],
@@ -143,12 +142,13 @@ export default function Gallery() {
 
   const conLai = shown.length - hienThi.length;
 
-  // Kéo hẹp cửa sổ (12 mẫu mỗi lượt tụt xuống còn 9) có thể làm danh sách
-  // ngắn lại ngay dưới chân cái ô popup đang mở — cứ đưa index cũ cho popup
-  // thì nó trỏ vào ô trống rồi vỡ. Chốt lại ngay ở đây: ra ngoài tầm thì coi
-  // như popup đang đóng.
+  // Chốt an toàn: index nào rơi ra ngoài danh sách thì coi như popup đang
+  // đóng, khỏi trỏ vào ô trống rồi vỡ. Đo theo `shown` — popup chạy trên trọn
+  // danh mục nên kéo hẹp cửa sổ (12 mẫu mỗi lượt tụt còn 9) không còn làm cụt
+  // danh sách dưới chân nó nữa; chỉ còn lúc đổi danh mục là `shown` ngắn lại,
+  // mà đường đó đã setOpenIndex(null) sẵn rồi.
   const chiSoMo =
-    openIndex !== null && openIndex < hienThi.length ? openIndex : null;
+    openIndex !== null && openIndex < shown.length ? openIndex : null;
 
   // Bấm nốt lượt cuối là cả cụm nút biến mất, con trỏ bàn phím rơi về <body>
   // — người dùng bàn phím bấm Tab tiếp là quay lại từ đầu trang. Nên khi nút
@@ -354,9 +354,18 @@ export default function Gallery() {
         </p>
       </div>
 
+      {/* Popup nhận TRỌN danh sách của danh mục đang chọn, không phải khúc
+          đang bày trên lưới: bấm vào một thẻ rồi là "Tiếp" đi được hết 54 mẫu
+          (hoặc hết cả danh mục đang lọc), chứ không cụt ngay ở mẫu 12/9/8 của
+          lượt đầu — người xem đâu có phân biệt được đâu là mẫu đã tải, họ chỉ
+          thấy popup tự quay vòng sớm một cách vô cớ.
+          Index dùng chung được, không phải quy đổi gì: `hienThi` là khúc đầu
+          của `shown`, cùng thứ tự và cùng gốc 0.
+          Dải ảnh nhỏ trong popup vốn đã tính cho đúng cỡ này (ảnh mini 96px,
+          loading="lazy"), nên bày 54 ô cũng không nặng thêm. */}
       {chiSoMo !== null && (
         <Lightbox
-          items={hienThi}
+          items={shown}
           index={chiSoMo}
           onClose={() => setOpenIndex(null)}
           onNavigate={setOpenIndex}
