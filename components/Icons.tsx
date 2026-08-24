@@ -258,7 +258,7 @@ export function PlayIcon({ className = "size-5" }: IconProps) {
    Bốn icon cho thanh điều hướng nổi ở đáy màn hình điện thoại
    -------------------------------------------------------------------------- */
 
-/** Ngôi nhà — mục "Trang chủ" */
+/** Ngôi nhà — mục đầu tiên trên menu, nhảy về đầu trang */
 export function HomeIcon({ className = "size-6" }: IconProps) {
   return (
     <svg
@@ -325,6 +325,76 @@ export function MessageIcon({ className = "size-6" }: IconProps) {
     >
       <path d="M20.5 11.7c0 4.03-3.81 7.3-8.5 7.3-.93 0-1.83-.13-2.67-.37l-4.66 1.86 1.25-3.83C4.24 15.35 3.5 13.6 3.5 11.7c0-4.03 3.81-7.3 8.5-7.3s8.5 3.27 8.5 7.3Z" />
       <path d="M8.5 11.7h.01M12 11.7h.01M15.5 11.7h.01" strokeWidth={2.4} />
+    </svg>
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Ba icon mạng xã hội ở chân trang
+
+   Cả ba đều vẽ NÉT (không tô đặc) cùng độ dày 1.9 như mấy icon còn lại của
+   web, để ba cái đứng cạnh nhau nhìn ra một bộ chứ không phải ba logo đi
+   mượn mỗi nơi một kiểu. Không dùng màu thương hiệu (xanh Zalo, xanh
+   Facebook, gradient Instagram) — chúng chọi với bảng màu kem–nâu; ở đây
+   icon ăn theo màu chữ của nút bọc ngoài nên tô nâu được hết.
+   -------------------------------------------------------------------------- */
+
+/**
+ * Zalo — bong bóng chat có đuôi, bên trong là chữ Z.
+ *
+ * Dáng bong bóng lấy lại đúng của MessageIcon để hai chỗ nhìn cùng một họ,
+ * chỉ thay ba chấm bằng chữ Z cho ra Zalo.
+ */
+export function ZaloIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <path d="M20.5 11.7c0 4.03-3.81 7.3-8.5 7.3-.93 0-1.83-.13-2.67-.37l-4.66 1.86 1.25-3.83C4.24 15.35 3.5 13.6 3.5 11.7c0-4.03 3.81-7.3 8.5-7.3s8.5 3.27 8.5 7.3Z" />
+      <path d="M9.05 8.85h5.9l-5.9 5.7h5.9" strokeWidth={1.75} />
+    </svg>
+  );
+}
+
+/** Facebook — chữ f nằm trong vòng tròn */
+export function FacebookIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <circle cx="12" cy="12" r="8.6" />
+      <path d="M14.9 8.2h-1.5a1.95 1.95 0 0 0-1.95 1.95v8.55" />
+      <path d="M9.9 12.75h4.75" />
+    </svg>
+  );
+}
+
+/**
+ * Instagram — khung vuông bo tròn, ống kính và chấm đèn.
+ *
+ * Chấm đèn là một đoạn thẳng dài bằng 0: đầu nét bo tròn (strokeLinecap
+ * round) nên nó hiện ra thành một chấm tròn, khỏi phải vẽ thêm hình.
+ */
+export function InstagramIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5.2" />
+      <circle cx="12" cy="12" r="4.05" />
+      <path d="M16.9 7.1h.01" strokeWidth={2.4} />
     </svg>
   );
 }

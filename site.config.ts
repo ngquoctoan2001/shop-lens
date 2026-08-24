@@ -21,15 +21,20 @@ export const site = {
    * nên thẻ og:image trỏ về một tên miền không tồn tại: Zalo và Facebook đi lấy
    * ảnh không được, link chia sẻ chỉ còn chữ, mất tấm ảnh thú bông.
    *
-   * Đang để tên miền miễn phí của Cloudflare Pages. Đổi tên dự án trên
-   * Cloudflare hoặc mua tên miền riêng (vd "https://lennhasuen.vn") thì sửa
-   * đúng một dòng này, mọi chỗ khác tự ăn theo. Không có dấu / ở cuối.
+   * Đang chạy trên tên miền riêng lennhasuen.com (mua ở PA Vietnam, DNS do
+   * Cloudflare quản, web vẫn nằm trên Cloudflare Pages). Địa chỉ cũ
+   * shop-lens-ar8.pages.dev vẫn sống và trỏ về cùng một web — nhưng chỗ này
+   * phải ghi tên miền chính, vì nó là link canonical báo cho Google biết đâu
+   * mới là bản thật, tránh bị tính hai trang trùng nội dung.
+   *
+   * Đổi tên miền lần nữa thì sửa đúng một dòng này, mọi chỗ khác tự ăn theo.
+   * Không có dấu / ở cuối.
    */
-  url: "https://shop-lens-ar8.pages.dev",
+  url: "https://lennhasuen.com",
 
   /** Các mục điều hướng — dùng chung cho menu đầu trang và chân trang */
   nav: [
-    { label: "Trang chủ", href: "#top" },
+    { label: "Giới thiệu", href: "#top" },
     { label: "Sản phẩm", href: "#san-pham" },
     { label: "Về shop", href: "#ve-shop" },
     { label: "Liên hệ", href: "#lien-he" },
@@ -40,6 +45,8 @@ export const site = {
     zalo: "0969634653",
     /** Link Facebook / Messenger của shop */
     facebook: "https://www.facebook.com/xuyen.huynh.94801116",
+    /** Link Instagram của shop */
+    instagram: "https://www.instagram.com/lennhasuen/",
   },
 
   /** Ba con số khoe ở màn hình đầu tiên */
@@ -63,6 +70,8 @@ export const site = {
 export const zaloLink = `https://zalo.me/${site.contact.zalo}`;
 /** Link Facebook / Messenger */
 export const fbLink = site.contact.facebook;
+/** Link Instagram */
+export const igLink = site.contact.instagram;
 
 /** Số điện thoại có dấu cách cho dễ đọc: 0969 634 653 */
 export const zaloDisplay = site.contact.zalo.replace(

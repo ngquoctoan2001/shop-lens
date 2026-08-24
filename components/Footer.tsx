@@ -1,18 +1,43 @@
-import { fbLink, site, zaloDisplay, zaloLink } from "@/site.config";
+import { fbLink, igLink, site, zaloLink } from "@/site.config";
 import Logo from "./Logo";
 import CurrentYear from "./CurrentYear";
-import { FlowerIcon } from "./Icons";
+import {
+  FacebookIcon,
+  FlowerIcon,
+  InstagramIcon,
+  ZaloIcon,
+} from "./Icons";
 
 /**
- * Chân trang gọn: một hàng (logo · điều hướng · liên hệ) rồi tới dòng bản quyền.
+ * Chân trang gọn: một hàng (logo · ba icon mạng xã hội) rồi tới dòng bản quyền.
  *
- * Lề âm -mx-3 là để bù phần đệm hai bên của mấy viên link — nhờ vậy chữ đầu
- * dòng thẳng hàng với logo chứ không bị thụt vào 12px.
+ * Không lặp lại menu ở đây nữa: trên máy tính menu đã nằm sẵn trên header,
+ * trên điện thoại thì có thanh nổi ở đáy màn hình (components/BottomNav.tsx)
+ * lúc nào cũng trong tầm ngón cái.
+ *
+ * Mốc đổi kiểu là md (768px) — cùng mốc mà thanh nổi ở đáy tự ẩn đi và phần
+ * đệm pb-28 chừa chỗ cho nó được trả về bình thường, nên cả chân trang đổi
+ * dáng một lượt. Dưới md: xếp dọc, căn giữa hết. Từ md: logo bên trái, ba
+ * icon bên phải.
  */
 
-/** Viên link nhỏ, cao 44px cho ngón tay bấm trên điện thoại vẫn trúng */
-const LINK =
-  "inline-flex min-h-11 items-center rounded-full px-3 text-[14.5px] font-semibold text-ink-soft transition-colors hover:bg-bg-alt hover:text-ink";
+/**
+ * Nút tròn của ba mạng xã hội.
+ *
+ * Rộng 44px cho ngón tay bấm trên điện thoại vẫn trúng. Lúc thường là
+ * khuyên trắng viền kem, icon nâu (--accent-3); rê chuột vào thì đảo lại —
+ * nền nâu, icon màu kem — kèm nhích lên nửa nấc cho mềm. Cả ba dùng chung
+ * một tông nâu của shop, không mượn màu thương hiệu để khỏi chọi bảng màu.
+ */
+const SOCIAL =
+  "grid size-11 place-items-center rounded-full border-2 border-border bg-card text-accent-3 shadow-[var(--shadow-s)] transition-[transform,color,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent-3 hover:bg-accent-3 hover:text-bg hover:shadow-[var(--shadow-m)]";
+
+/** Ba mạng xã hội của shop — thêm bớt ở đây là hàng icon tự đổi theo */
+const MANG_XA_HOI = [
+  { ten: "Zalo", href: zaloLink, Icon: ZaloIcon },
+  { ten: "Facebook", href: fbLink, Icon: FacebookIcon },
+  { ten: "Instagram", href: igLink, Icon: InstagramIcon },
+];
 
 export default function Footer() {
   // Năm lúc build. Trên web tĩnh con số này đông cứng trong file HTML, nên
@@ -25,41 +50,32 @@ export default function Footer() {
   return (
     <footer className="mt-14 border-t-2 border-border pb-28 pt-8 md:mt-16 md:pb-7">
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
-        <div className="flex flex-wrap items-center justify-between gap-x-10 gap-y-5">
-          <div>
-            <Logo />
-            <p className="mt-2 max-w-[38ch] text-[14px] font-medium text-ink-soft">
-              Tiệm len nhỏ, móc tay từng chiếc. Mỗi bạn nhỏ là một món quà.
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 md:justify-between">
+          <div className="w-full md:w-auto">
+            <Logo className="justify-center md:justify-start" />
+            {/* Hai câu tách hẳn thành hai dòng, không để trình duyệt tự
+                xuống dòng theo bề ngang — kiểu cũ hay cắt ngang giữa câu
+                thành "... Mỗi bạn / nhỏ là một món quà." nhìn rất kỳ. */}
+            <p className="mt-2 text-center text-[14px] font-medium text-ink-soft md:text-left">
+              <span className="block">Tiệm len nhỏ, móc tay từng chiếc.</span>
+              <span className="block">Mỗi bạn nhỏ là một món quà.</span>
             </p>
           </div>
 
-          <div className="-mx-3 flex flex-col gap-y-0.5 sm:items-end">
-            <nav className="flex flex-wrap" aria-label="Điều hướng chân trang">
-              {site.nav.map((item) => (
-                <a key={item.href} href={item.href} className={LINK}>
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-
-            <div className="flex flex-wrap">
+          <div className="flex items-center gap-2.5">
+            {MANG_XA_HOI.map(({ ten, href, Icon }) => (
               <a
-                href={zaloLink}
+                key={ten}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={LINK}
+                aria-label={`${site.name} trên ${ten}`}
+                title={ten}
+                className={SOCIAL}
               >
-                Zalo · {zaloDisplay}
+                <Icon className="size-[21px]" />
               </a>
-              <a
-                href={fbLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={LINK}
-              >
-                Facebook
-              </a>
-            </div>
+            ))}
           </div>
         </div>
 
