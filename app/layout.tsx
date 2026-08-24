@@ -37,12 +37,12 @@ const banner = Playfair_Display({
 /**
  * Ảnh hiện lên khi ai đó dán link web vào Facebook, Zalo, Messenger.
  *
- * Đang dùng tấm banner thú bông "ôm một cái là hết buồn" — đã cắt sẵn đúng cỡ
- * 1200x630 và nằm ở public/og.jpg. Không có ảnh này thì link chia sẻ chỉ hiện
- * một ô xám trống trơ — với shop bán chủ yếu qua Facebook thì đó là mất khách
- * thật. Muốn đổi ảnh khác: thay file public/og.jpg bằng ảnh mới đúng cỡ
- * 1200x630 là xong, không phải sửa code. Nhớ dùng JPG hoặc PNG — Facebook đọc
- * WebP không chắc ăn.
+ * Đang dùng logo shop "Suen mốc len" đặt giữa nền nâu (làm từ
+ * anh-goc/images/logo-mark.webp) — đã xuất sẵn đúng cỡ 1200x630 và nằm ở
+ * public/og.jpg. Không có ảnh này thì link chia sẻ chỉ hiện một ô xám trống
+ * trơ — với shop bán chủ yếu qua Facebook thì đó là mất khách thật. Muốn đổi
+ * ảnh khác: thay file public/og.jpg bằng ảnh mới đúng cỡ 1200x630 là xong,
+ * không phải sửa code. Nhớ dùng JPG hoặc PNG — Facebook đọc WebP không chắc ăn.
  *
  * Đường dẫn "/og.jpg" được metadataBase nối với site.url thành địa chỉ đầy đủ.
  * Nên site.url trong site.config.ts mà ghi sai tên miền là ảnh chết theo — đó
