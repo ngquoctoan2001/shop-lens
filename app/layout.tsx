@@ -1,3 +1,6 @@
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import type { Metadata, Viewport } from "next";
 import { Quicksand, Nunito, Playfair_Display } from "next/font/google";
 import { site } from "@/site.config";
@@ -53,10 +56,35 @@ const banner = Playfair_Display({
  * developers.facebook.com/tools/debug dán link vào bấm "Scrape Again".
  * Zalo thì dùng developers.zalo.me/tools/debug-og-tag.
  */
+/**
+ * Dấu vân tay của chính file public/og.jpg, gắn vào cuối địa chỉ ảnh thành
+ * /og.jpg?v=abc12345. Thay ảnh là chuỗi này tự đổi theo, không phải nhớ sửa tay.
+ *
+ * VÌ SAO CẦN: ngày 24/08 đã thay ảnh mới, đẩy lên đầy đủ, bản build trên
+ * Cloudflare Pages cũng có ảnh mới — nhưng link chia sẻ vẫn ra ảnh cũ suốt hơn
+ * một ngày. Lý do là địa chỉ /og.jpg không hề đổi, nên hai lớp bộ nhớ đệm nằm
+ * giữa cứ trả lại bản chúng giữ từ trước:
+ *   1. Bộ đệm biên Cloudflare của tên miền lennhasuen.com
+ *   2. Bộ đệm ảnh xem trước của chính Zalo/Facebook
+ * Đổi ảnh mà giữ nguyên địa chỉ thì với chúng nó vẫn là "tấm ảnh cũ ấy mà".
+ *
+ * Gắn vân tay vào là mỗi lần thay ảnh sẽ ra một địa chỉ chưa ai từng thấy,
+ * không lớp đệm nào có sẵn để trả về — buộc phải đi lấy bản mới.
+ *
+ * readFileSync chạy lúc dựng trang chứ không phải lúc khách mở web: khối
+ * metadata này Next.js chỉ tính một lần khi build ra file HTML tĩnh.
+ */
+const vanTayAnh = createHash("sha1")
+  .update(readFileSync(join(process.cwd(), "public", "og.jpg")))
+  .digest("hex")
+  .slice(0, 8);
+
+const DUONG_DAN_ANH = `/og.jpg?v=${vanTayAnh}`;
+
 const ANH_CHIA_SE = {
-  url: "/og.jpg",
+  url: DUONG_DAN_ANH,
   // Zalo và vài trình đọc cũ chỉ nhận ảnh khi có bản https ghi rõ ràng
-  secureUrl: `${site.url}/og.jpg`,
+  secureUrl: `${site.url}${DUONG_DAN_ANH}`,
   type: "image/jpeg",
   width: 1200,
   height: 630,
