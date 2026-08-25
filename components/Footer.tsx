@@ -1,10 +1,11 @@
-import { fbLink, igLink, site, zaloLink } from "@/site.config";
+import { fbLink, igLink, site, ttLink, zaloLink } from "@/site.config";
 import Logo from "./Logo";
 import CurrentYear from "./CurrentYear";
 import {
   FacebookIcon,
   FlowerIcon,
   InstagramIcon,
+  TikTokIcon,
   ZaloIcon,
 } from "./Icons";
 
@@ -32,11 +33,12 @@ import {
 const SOCIAL =
   "grid size-11 place-items-center rounded-full border-2 border-border bg-card text-accent-3 shadow-[var(--shadow-s)] transition-[transform,color,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-accent-3 hover:bg-accent-3 hover:text-bg hover:shadow-[var(--shadow-m)]";
 
-/** Ba mạng xã hội của shop — thêm bớt ở đây là hàng icon tự đổi theo */
+/** Các mạng xã hội của shop — thêm bớt ở đây là hàng icon tự đổi theo */
 const MANG_XA_HOI = [
   { ten: "Zalo", href: zaloLink, Icon: ZaloIcon },
   { ten: "Facebook", href: fbLink, Icon: FacebookIcon },
   { ten: "Instagram", href: igLink, Icon: InstagramIcon },
+  { ten: "TikTok", href: ttLink, Icon: TikTokIcon },
 ];
 
 export default function Footer() {
@@ -47,8 +49,10 @@ export default function Footer() {
 
   // pb-28 chừa chỗ cho thanh điều hướng nổi ở đáy màn hình điện thoại; từ md
   // trở lên không còn thanh đó nên trả về khoảng đệm thường.
+  // Nền kem đậm (--bg-alt) dùng chung với khu sản phẩm, tách chân trang khỏi
+  // nền kem sữa của phần nội dung phía trên.
   return (
-    <footer className="mt-14 border-t-2 border-border pb-28 pt-8 md:mt-16 md:pb-7">
+    <footer className="mt-14 border-t-2 border-border bg-bg-alt bg-[image:var(--nen-footer)] pb-28 pt-8 md:mt-16 md:pb-7">
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
         <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 md:justify-between">
           <div className="w-full md:w-auto">

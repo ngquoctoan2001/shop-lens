@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import type { Product } from "@/lib/products";
+import { site } from "@/site.config";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CloseIcon,
+  DownloadIcon,
   FlowerIcon,
   GiftIcon,
   HandmadeIcon,
@@ -188,13 +190,25 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
         className="animate-modal-in relative flex max-h-[88svh] w-full flex-col overflow-hidden rounded-[26px] bg-card shadow-[var(--shadow-l)] transition-transform duration-300 ease-[cubic-bezier(.22,1,.36,1)] sm:rounded-[30px] md:max-h-[86svh] md:min-h-[min(470px,86svh)] md:max-w-[940px] md:flex-row md:rounded-[34px]"
       >
         {/* Nút đóng — nằm ở góc trên bên phải của cả tấm thẻ, không nhét trong
-            cột ảnh nữa, để trên máy tính nó ra hẳn mép ngoài */}
+            cột ảnh nữa, để trên máy tính nó ra hẳn mép ngoài.
+
+            Nền kính mờ, dùng chung cho cả ba nút ‹ › ✕: bg-card/60 +
+            backdrop-blur-md. Trước đây để /95 nên nó thành cục trắng đặc dán
+            trên ảnh, nhìn rất thô. Hạ xuống 60% là thấy được ảnh phía sau,
+            còn lớp blur giữ cho hình bên dưới không lộm cộm làm khó nhìn icon.
+            Không hạ thấp hơn được: 60% trắng đè lên chỗ ảnh đen nhất vẫn cho
+            icon nâu --ink tương phản ~4.4:1, dưới nữa là icon chìm mất.
+            ring-ink/10 vẽ viền tóc quanh nút — cần cái này vì trên máy tính
+            nút ✕ nằm đè lên cột chữ nền trắng, không có viền thì nó tan biến.
+            transition kê đích danh `scale` chứ không phải `transform`:
+            Tailwind v4 dịch scale-110 ra thuộc tính riêng, để transform như
+            cũ là hover phóng to giật cục không có nhịp chuyển. */}
         <button
           ref={closeRef}
           type="button"
           onClick={onClose}
           aria-label="Đóng"
-          className="absolute right-2 top-2 z-30 grid size-10 place-items-center rounded-full bg-card/95 text-ink shadow-[var(--shadow-m)] backdrop-blur transition-transform duration-200 hover:scale-110 md:right-4 md:top-4 md:size-11"
+          className="absolute right-2 top-2 z-30 grid size-10 place-items-center rounded-full bg-card/60 text-ink shadow-[var(--shadow-s)] ring-1 ring-ink/10 backdrop-blur-md transition-[scale,background-color] duration-200 hover:scale-110 hover:bg-card/90 md:right-4 md:top-4 md:size-11"
         >
           <CloseIcon className="size-[18px] md:size-5" />
         </button>
@@ -206,6 +220,33 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
           onTouchEnd={onTouchEnd}
           className="relative shrink-0 touch-none bg-bg-alt p-3 md:w-[50%] md:touch-auto md:self-stretch md:p-6"
         >
+          {/* NÚT TẢI ẢNH — góc dưới bên PHẢI của sân khấu ảnh.
+
+              Quanh tấm ảnh chỉ có mấy chỗ neo được, và phần lớn đã có người ở:
+              phải trên là ✕, hai bên hông giữa là ‹ ›, đáy giữa là ô đếm
+              "3 / 12". Góc dưới phải trống, lại là chỗ ngón cái với tới dễ
+              nhất khi cầm điện thoại một tay.
+
+              Ô đếm nằm ở đáy GIỮA (left-1/2 -translate-x-1/2) nên hai cái
+              không cấn nhau, kể cả ở khổ hẹp nhất — đã đo.
+
+              Là thẻ <a download> chứ không phải <button>: trang xuất web tĩnh
+              nên ảnh nằm cùng tên miền, trình duyệt tải thẳng, không cần một
+              dòng JS nào. Kèm luôn tên shop vào tên file để khách lưu về máy
+              còn biết ảnh ở đâu ra.
+
+              Nền kính mờ dùng chung một khuôn với ba nút kia — xem chú thích
+              dài ở nút ✕ phía trên để biết vì sao lại là /60 và ring-ink/10. */}
+          <a
+            href={product.image}
+            download={`${site.name}-${product.image.split("/").pop()}`}
+            aria-label={`Tải ảnh: ${product.name}`}
+            title="Tải ảnh về máy"
+            className="absolute bottom-2 right-2 z-20 grid size-10 place-items-center rounded-full bg-card/60 text-ink shadow-[var(--shadow-s)] ring-1 ring-ink/10 backdrop-blur-md transition-[scale,background-color] duration-200 hover:scale-110 hover:bg-card/90 md:bottom-4 md:right-4 md:size-11"
+          >
+            <DownloadIcon className="size-[18px] md:size-5" />
+          </a>
+
           {/* Hai mảng màu loang cho nền đỡ phẳng */}
           <span
             aria-hidden="true"
@@ -259,7 +300,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
                 type="button"
                 onClick={goPrev}
                 aria-label="Mẫu trước"
-                className="absolute left-5 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-card/95 text-ink shadow-[var(--shadow-m)] backdrop-blur transition-transform duration-200 hover:scale-110 md:left-3 md:size-11"
+                className="absolute left-5 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-card/60 text-ink shadow-[var(--shadow-s)] ring-1 ring-ink/10 backdrop-blur-md transition-[scale,background-color] duration-200 hover:scale-110 hover:bg-card/90 md:left-3 md:size-11"
               >
                 <ChevronLeftIcon className="size-5" />
               </button>
@@ -267,7 +308,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
                 type="button"
                 onClick={goNext}
                 aria-label="Mẫu tiếp theo"
-                className="absolute right-5 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-card/95 text-ink shadow-[var(--shadow-m)] backdrop-blur transition-transform duration-200 hover:scale-110 md:right-3 md:size-11"
+                className="absolute right-5 top-1/2 z-20 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-card/60 text-ink shadow-[var(--shadow-s)] ring-1 ring-ink/10 backdrop-blur-md transition-[scale,background-color] duration-200 hover:scale-110 hover:bg-card/90 md:right-3 md:size-11"
               >
                 <ChevronRightIcon className="size-5" />
               </button>
@@ -292,7 +333,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
               id="ten-san-pham-popup"
               className="text-[23px] font-bold leading-tight sm:text-[28px] md:text-[30px]"
             >
-              {product.name}
+              <span className="title-swipe">{product.name}</span>
             </h2>
             <p className="mt-2 text-[14.5px] font-medium text-ink-soft sm:text-[15.5px]">
               {product.desc}
@@ -317,10 +358,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
             {/* Ghi chú về giá */}
             <p className="mt-3 flex items-start gap-2.5 rounded-2xl border-2 border-dashed border-accent/60 bg-accent/10 px-3.5 py-3 text-[12.5px] font-bold text-accent-3 sm:text-[13.5px]">
               <FlowerIcon className="mt-[3px] size-3.5 shrink-0 text-accent" />
-              <span>
-                Nhắn shop để biết giá và thời gian làm nhé — mỗi bé đều được móc
-                tay riêng.
-              </span>
+              <span>Nhắn shop để biết giá và thời gian hoàn làm nhé</span>
             </p>
 
             {/* Dải ảnh nhỏ để nhảy nhanh sang mẫu khác */}

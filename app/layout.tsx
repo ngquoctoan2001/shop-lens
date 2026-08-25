@@ -60,13 +60,13 @@ const ANH_CHIA_SE = {
   type: "image/jpeg",
   width: 1200,
   height: 630,
-  alt: `${site.name} — đồ len móc tay handmade`,
+  alt: `${site.name} | Suen - Handmade Crochet`,
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — Đồ len móc tay handmade`,
+    default: `${site.name} | Suen - Handmade Crochet`,
     template: `%s · ${site.name}`,
   },
   description: site.description,
@@ -87,13 +87,13 @@ export const metadata: Metadata = {
     locale: "vi_VN",
     siteName: site.name,
     url: "/",
-    title: `${site.name} — Đồ len móc tay handmade`,
+    title: `${site.name} | Suen - Handmade Crochet`,
     description: site.description,
     images: [ANH_CHIA_SE],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — Đồ len móc tay handmade`,
+    title: `${site.name} | Suen - Handmade Crochet`,
     description: site.description,
     images: [ANH_CHIA_SE],
   },

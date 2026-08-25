@@ -7,7 +7,7 @@
 :root {
   --bg: #fdf8f3; /* nền chính, kem sữa            */
   --bg-alt: #f5e9dc; /* nền phụ, đậm hơn chút        */
-  --bg-deep: #2f2119; /* nền tối cho khối CTA         */
+  --bg-deep: #2f2119; /* nâu đậm: chữ trên nền accent, màn mờ lightbox */
   --ink: #43301f; /* chữ chính, nâu cacao         */
   --card: #ffffff; /* nền thẻ sản phẩm             */
   --border: #eadbc8; /* viền                         */
@@ -32,6 +32,13 @@
   --blob-2: #f2c9bf;
   --blob-3: #ebd9be;
 
+  /* Nền loang cho khu sản phẩm và chân trang — thay cho mảng --bg-alt phẳng.
+     Đầu dải nhạt gần màu nền trang cho khúc giáp mối êm, càng xuống càng ấm
+     dần sang kem đào. Vẫn giữ bg-bg-alt làm màu lót ở chỗ dùng, lỡ trình
+     duyệt nào không vẽ được gradient thì còn màu cũ đỡ lưng. */
+  --nen-san-pham: linear-gradient(178deg, #f8efe4 0%, #f5e9dc 42%, #f1decb 100%);
+  --nen-footer: linear-gradient(180deg, #f5e9dc 0%, #efdac4 100%);
+
   /* Bóng riêng cho thanh đầu trang khi cuộn xuống — rộng và mềm để tách
      header khỏi phần nội dung chạy bên dưới, không thành vệt đen cứng. */
   --shadow-header:
@@ -40,6 +47,22 @@
   --shadow-s: 0 2px 8px rgba(60, 40, 25, 0.05);
   --shadow-m: 0 10px 30px -12px rgba(60, 40, 25, 0.16);
   --shadow-l: 0 26px 60px -22px rgba(60, 40, 25, 0.26);
+
+  /* Bóng riêng cho nút nền nâu đặc ở cuối lưới sản phẩm.
+     Hai lớp chồng nhau: một vệt sáng 1px nằm TRONG mép trên cho mặt nút hơi
+     cong lên, hứng sáng như một vật thật; một bóng đổ ngắn phía dưới. Bóng
+     pha theo màu nâu cacao của trang (67,48,31) chứ không phải xám đen — nền
+     kem mà đổ bóng xám thì cả góc xỉn đi thấy rõ.
+     Bản -hover chỉ dài và sâu thêm một nấc, đi kèm cú nhấc 2px. */
+  --shadow-nut:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 4px 14px -6px rgba(67, 48, 31, 0.5);
+  --shadow-nut-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 10px 22px -8px rgba(67, 48, 31, 0.55);
+  /* Bóng nhấc cho nút nền trắng — nhạt hơn hẳn nút chính, chỉ đủ tách nút
+     khỏi nền khi rê chuột */
+  --shadow-nut-phu-hover: 0 8px 18px -8px rgba(67, 48, 31, 0.35);
 
   /* Chiều cao thanh đầu trang. ĐÂY LÀ CHỖ DUY NHẤT ghi con số này — Header.tsx
      và chỗ dò mục đang xem đều đọc lại từ đây, sửa một chỗ là cả ba khớp nhau.
@@ -169,9 +192,10 @@ h4 {
   z-index: -1;
 }
 
-/* Tên sản phẩm trong thẻ — rê chuột thì vệt bút nhớ hồng đào loang từ trái
-   sang, cùng ngôn ngữ với .marker ở tiêu đề lớn. Dùng background chứ không
-   dùng ::after để tên xuống dòng mấy dòng vẫn có vệt màu ở từng dòng. */
+/* Tên sản phẩm trong thẻ và trong popup chi tiết — vệt bút nhớ hồng đào kê
+   sẵn dưới chữ (trước đây chỉ loang ra khi rê chuột, giờ hiện mặc định),
+   cùng ngôn ngữ với .marker ở tiêu đề lớn. Dùng background chứ không dùng
+   ::after để tên xuống dòng mấy dòng vẫn có vệt màu ở từng dòng. */
 .title-swipe {
   background-image: linear-gradient(
     color-mix(in srgb, var(--accent) 48%, transparent),
@@ -179,13 +203,9 @@ h4 {
   );
   background-repeat: no-repeat;
   background-position: 0 92%;
-  background-size: 0 0.32em;
-  transition: background-size 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  background-size: 100% 0.32em;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-}
-.group:hover .title-swipe {
-  background-size: 100% 0.32em;
 }
 
 /* ============ NỀN KÍNH MỜ CHO HEADER VÀ THANH DƯỚI ============
@@ -257,22 +277,26 @@ h4 {
   opacity: 0.5;
 }
 
-/* Mũi tên trên nút "Xem tiếp" nhún xuống nhè nhẹ khi rê chuột — ra ý "còn nữa
-   ở phía dưới". Biên độ 3px và chậm, đủ thấy mà không thành nhấp nháy.
+/* Mũi tên trên nút "Thu gọn" nhún lên nhè nhẹ khi rê chuột — ra ý "gấp lại
+   lên trên". Biên độ 3px và chậm, đủ thấy mà không thành nhấp nháy.
    Dùng `translate` chứ không dùng `transform` cho đồng bộ với Tailwind v4 —
-   nó cũng dịch mấy class translate/scale ra thuộc tính riêng như vậy. */
-@keyframes nhun-xuong {
+   nó cũng dịch mấy class translate/scale ra thuộc tính riêng như vậy.
+
+   Mũi tên trong nút vẽ bằng ChevronDownIcon rồi lật 180°, nhưng khung hình
+   vẫn phải viết là nhún LÊN (-3px) chứ không mượn lại bộ nhún xuống: CSS chạy
+   `translate` TRƯỚC `rotate`, nên phép lật không đảo chiều dịch chuyển. */
+@keyframes nhun-len {
   0%,
   100% {
     translate: 0 0;
   }
   50% {
-    translate: 0 3px;
+    translate: 0 -3px;
   }
 }
-.nut-tiep:hover .mui-ten,
-.nut-tiep:focus-visible .mui-ten {
-  animation: nhun-xuong 1.1s ease-in-out infinite;
+.nut-thu:hover .mui-ten,
+.nut-thu:focus-visible .mui-ten {
+  animation: nhun-len 1.1s ease-in-out infinite;
 }
 
 /* ==========================================================================

@@ -109,7 +109,9 @@ export function ChevronRightIcon({ className = "size-6" }: IconProps) {
   );
 }
 
-/** Mũi tên xuống — nút "Xem tiếp" ở cuối lưới sản phẩm */
+/** Mũi tên xuống — bộ nút cuối lưới sản phẩm ("Thêm N mẫu", "Thu gọn").
+ *  Nét mảnh hơn mấy icon khác (2.2 thay vì 2.4): ở cỡ 16–18px nằm cạnh chữ,
+ *  nét 2.4 nhìn thô như vẽ bằng bút lông. */
 export function ChevronDownIcon({ className = "size-4" }: IconProps) {
   return (
     <svg
@@ -117,7 +119,7 @@ export function ChevronDownIcon({ className = "size-4" }: IconProps) {
       className={`${base} ${className}`}
       aria-hidden="true"
       {...stroke}
-      strokeWidth={2.4}
+      strokeWidth={2.2}
     >
       <path d="m5 9 7 7 7-7" />
     </svg>
@@ -395,6 +397,44 @@ export function InstagramIcon({ className = "size-5" }: IconProps) {
       <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="5.2" />
       <circle cx="12" cy="12" r="4.05" />
       <path d="M16.9 7.1h.01" strokeWidth={2.4} />
+    </svg>
+  );
+}
+
+/**
+ * TikTok — nốt nhạc: đầu nốt tròn dưới trái, thân đứng, cờ vẩy sang phải.
+ * Vẽ nét đơn giản hoá từ logo gốc cho cùng bộ với ba icon trên.
+ */
+export function TikTokIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <circle cx="9.1" cy="16.2" r="3.4" />
+      <path d="M12.5 16.2V4.3c.4 2.9 2.7 5.1 5.6 5.4" />
+    </svg>
+  );
+}
+
+/**
+ * Tải xuống — mũi tên chỉ xuống một cái khay hứng.
+ * Dùng cho nút tải ảnh sản phẩm trong popup xem chi tiết.
+ */
+export function DownloadIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={2.2}
+    >
+      <path d="M12 3.8v10.4m0 0-4-4m4 4 4-4" />
+      <path d="M4.9 16.9v1.6c0 .9.7 1.7 1.6 1.7h11c.9 0 1.6-.8 1.6-1.7v-1.6" />
     </svg>
   );
 }

@@ -32,7 +32,11 @@ export default function ProductCard({ product, onOpen, className = "" }: Props) 
         // transition phải kê ĐÍCH DANH `scale`: Tailwind v4 dịch scale-[1.03]
         // ra thuộc tính `scale` riêng chứ không gói vào `transform` nữa. Danh
         // sách cũ chỉ có transform nên hover là thẻ nhảy cái rụp, không mượt.
-        className="stitch relative flex w-full flex-col overflow-hidden rounded-[24px] border border-card-line bg-card text-left shadow-[var(--shadow-s)] transition-[scale,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-[1.03] hover:border-accent hover:shadow-[var(--shadow-l)] sm:rounded-[30px]"
+        // active:scale-[0.98] là nhịp "lún xuống" lúc bấm giữ — trên điện
+        // thoại đây là phản hồi DUY NHẤT báo thẻ bấm được, vì máy cảm ứng
+        // không có hover. duration-100 để lún tức thì cho giống bấm nút thật;
+        // lúc thả tay class biến mất, thẻ bung về theo nhịp 500ms mượt sẵn.
+        className="stitch relative flex w-full flex-col overflow-hidden rounded-[24px] border border-card-line bg-card text-left shadow-[var(--shadow-s)] transition-[scale,box-shadow,border-color] duration-500 ease-[cubic-bezier(.22,.61,.36,1)] hover:scale-[1.03] hover:border-accent hover:shadow-[var(--shadow-l)] active:scale-[0.98] active:duration-100 sm:rounded-[30px]"
       >
         {/* Ô ảnh vuông. Giữ vuông bằng .khung-ti-le chứ không phải
             aspect-square — luật và lý do nằm ở app/globals.css.
@@ -78,12 +82,44 @@ export default function ProductCard({ product, onOpen, className = "" }: Props) 
         </div>
 
         {/* Một nhịp giãn cách duy nhất bằng gap, thay cho mỗi dòng một mb-*
-            mỗi kiểu. Dòng cuối đẩy xuống đáy bằng mt-auto nên các thẻ cùng
-            hàng đều thẳng chân. */}
-        <div className="flex flex-1 flex-col gap-2 p-4 sm:gap-2.5 sm:p-5">
+            mỗi kiểu.
+
+            pt-7/pt-9 to hơn padding còn lại là CỐ Ý: chừa chỗ cho nút mũi tên
+            vắt qua mép ảnh ngay bên dưới. Nút cao 36px (sm: 44px) thò xuống
+            đúng một nửa, cộng viền trắng 4px là chiếm 22px (sm: 26px) tính từ
+            đỉnh ruột thẻ — pt phải lớn hơn chừng đó, kẻo dòng danh mục chui
+            xuống dưới nút. */}
+        <div className="relative flex flex-1 flex-col gap-2 p-4 pt-7 sm:gap-2.5 sm:p-5 sm:pt-9">
+          {/* NÚT MŨI TÊN — dấu hiệu "bấm được" của cả thẻ.
+
+              Trước đây nó nằm tuốt dưới đáy, xám nhạt, đi kèm chữ "Xem chi
+              tiết" lặp lại ở cả chục thẻ. Bỏ chữ đi thì phải để cái nút tự nói
+              được, nên đổi ba thứ:
+
+              1. Vắt qua mép ảnh (-top nửa chiều cao) + viền trắng ring-4 —
+                 kiểu nút nổi quen thuộc, mắt đọc ra ngay là "bấm vào đây".
+                 Viền trắng ăn theo nền thẻ nên nút như được khoét ra khỏi ảnh
+                 chứ không phải dán đè lên.
+              2. Nền accent + bóng ngay từ lúc nghỉ, không đợi rê chuột. Máy
+                 cảm ứng không có trạng thái hover, mọi hiệu ứng chỉ chạy khi
+                 rê chuột thì trên điện thoại thẻ trông chết cứng.
+              3. Nằm ngay dưới mép ảnh nên mọi thẻ cùng hàng đều thẳng một
+                 dòng — ảnh vuông, bề ngang bằng nhau. Đặt dưới đáy như cũ thì
+                 phải nhờ mt-auto mới thẳng được.
+
+              Vẫn là <span aria-hidden> chứ không phải <button>: cả thẻ đã là
+              một cái nút rồi, lồng nút trong nút là HTML sai và trình đọc màn
+              hình sẽ đọc thành hai đích bấm. */}
+          <span
+            aria-hidden="true"
+            className="absolute -top-[18px] right-4 z-[3] grid size-9 place-items-center rounded-full bg-accent text-bg-deep shadow-[var(--shadow-m)] ring-4 ring-card transition-[background-color,color,scale] duration-300 ease-[cubic-bezier(.22,.61,.36,1)] group-hover:scale-110 group-hover:bg-ink group-hover:text-bg sm:-top-[22px] sm:right-5 sm:size-11"
+          >
+            <ArrowRightIcon className="size-4 transition-transform duration-500 ease-[cubic-bezier(.22,.61,.36,1)] group-hover:translate-x-0.5 sm:size-[18px]" />
+          </span>
+
           {/* Danh mục dời từ nhãn đè lên ảnh xuống thành dòng dẫn ở đây: ảnh
-              sạch hẳn, mà thứ tự đọc lại rõ — danh mục → tên → mô tả → hành
-              động. Màu chữ lấy từ --cat-ink của chính danh mục đó. */}
+              sạch hẳn, mà thứ tự đọc lại rõ — danh mục → tên → mô tả.
+              Màu chữ lấy từ --cat-ink của chính danh mục đó. */}
           <span
             className={`cat-eyebrow cat-${product.categorySlug} inline-flex items-center gap-1 font-extrabold uppercase sm:gap-1.5`}
           >
@@ -100,23 +136,6 @@ export default function ProductCard({ product, onOpen, className = "" }: Props) 
           <p className="text-pretty text-[13px] font-medium leading-[1.55] text-ink-soft sm:text-[14px]">
             {product.desc}
           </p>
-
-          {/* Chữ "Xem chi tiết" trơ trọi trông như link chưa làm xong. Ghép
-              thêm nút tròn mũi tên ở góc phải cho thẻ có điểm neo rõ ràng. */}
-          <div className="mt-auto flex items-center gap-3 pt-1.5">
-            {/* Máy hẹp dưới 360px thì thẻ chỉ còn ~105px bề ngang, chữ này bị
-                ép xuống hai dòng trông rất luộm thuộm — ẩn đi, để một mình
-                nút mũi tên làm dấu hiệu bấm được. */}
-            <span className="hidden text-[12px] font-extrabold text-ink-soft min-[360px]:inline sm:text-[14px]">
-              Xem chi tiết
-            </span>
-            <span
-              aria-hidden="true"
-              className="ml-auto grid size-9 shrink-0 place-items-center rounded-full bg-bg-alt text-ink transition-[background-color,color] duration-300 group-hover:bg-ink group-hover:text-bg sm:size-10"
-            >
-              <ArrowRightIcon className="size-4 transition-transform duration-500 ease-[cubic-bezier(.22,.61,.36,1)] group-hover:translate-x-0.5" />
-            </span>
-          </div>
         </div>
       </button>
     </article>

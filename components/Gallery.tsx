@@ -39,6 +39,73 @@ const MOI_LUOT = [
 /** Khổ hẹp nhất — cũng là con số dùng cho bản HTML tĩnh, lúc chưa đo được màn hình */
 const MOI_LUOT_HEP = 8;
 
+/* ==========================================================================
+   BỘ BA NÚT CUỐI LƯỚI
+   "Xem thêm 12"  ·  "Tất cả 54"  ·  "Thu gọn"
+
+   Nhãn giữ NGUYÊN MỘT BẢN ở mọi khổ màn hình. Trước đây điện thoại và máy
+   tính dùng hai bản chữ dài ngắn khác nhau — cùng một nút mà hai cái tên, ai
+   xem cả hai máy là thấy lệch ngay.
+
+   ---- Một khuôn duy nhất, khác nhau ở cái áo ----
+
+   Hai nút mở thêm đúc chung một khuôn: mấy chữ ngắn rồi tới CON SỐ để mờ đi
+   (text-xs opacity-70). Đó cũng đúng là cách thanh danh mục ngay phía trên
+   hiển thị số mẫu của từng nhóm, nên cả khu sản phẩm nói cùng một thứ tiếng.
+   "Tất cả 54" còn lấy nguyên nhãn của thẻ danh mục đầu tiên.
+
+   chính  "Xem thêm 12"  nền nâu đặc, chữ đậm nhất (800)
+   phụ    "Tất cả 54"    nền trắng, viền chỉ tơ, chữ đậm vừa (700)
+   nhẹ    "Thu gọn"      như nút phụ, nhưng CO VỪA CHỮ và mũi tên lật lên
+
+   Thứ bậc nằm hết ở cái áo — nút nào nền nâu là việc nên làm tiếp. Không cần
+   thêm icon hay khuyên tròn nào nữa: hai nút cùng khuôn, đọc lướt một cái là
+   thấy chúng là hai lựa chọn của CÙNG một việc, chỉ khác liều lượng.
+
+   ---- Mấy thứ làm bộ nút cũ trông thô, đã bỏ ----
+     · border-2 quanh nút nâu — viền cùng màu với ruột, thuần trọng lượng thừa.
+       Nét 2px trên nền kem là thứ lộ nhất; hai nút nền sáng giờ dùng chỉ tơ 1px.
+     · hover:ring-4 — quầng sáng dày bung ra cùng lúc với cú nhấc, kiểu hào
+       nhoáng đời cũ. Thay bằng bóng đổ dày thêm một nấc.
+     · nhấc 4px khi rê chuột — quá đà cho một cái nút. Còn 2px.
+     · "Thu gọn" kéo dài hết cỡ như hai nút kia — bảy chữ cái mà chiếm gần
+       300px, nhìn như thanh trạng thái. Giờ nó chỉ rộng bằng nội dung.
+     · "Thu gọn" để nền trong suốt — hoá ra trùng luôn màu nền khu sản phẩm,
+       nút chìm nghỉm. Giờ nền trắng như nút phụ.
+
+   Viền focus không khai ở đây: globals.css đã có luật :focus-visible chung
+   cho cả trang (outline 3px màu --ring).
+   ========================================================================== */
+
+/** Phần chung của cả ba: viên thuốc cao 52px, chữ không xuống dòng.
+ *  KHÔNG có flex-1 ở đây — nút nào cần giãn thì tự khai, để "Thu gọn" đứng
+ *  một mình được co vừa bề ngang chữ. */
+const NUT =
+  "group/nut inline-flex min-h-[52px] items-center justify-center whitespace-nowrap rounded-full text-[14px] transition-[translate,box-shadow,background-color,color] duration-200 ease-[cubic-bezier(.22,.61,.36,1)] active:translate-y-0 active:duration-75 sm:text-[15px]";
+
+/** Nút chính — cùng ruột với nút phụ ("chữ + số mờ"), chỉ khác cái áo: nền
+ *  nâu đặc thay vì nền trắng. Đó là toàn bộ chỗ phân thứ bậc, khỏi cần thêm
+ *  icon hay khuyên tròn nào nữa.
+ *  Bóng --shadow-nut kèm vệt sáng 1px trong mép trên cho mặt nút hơi cong
+ *  lên, không phẳng lì như miếng dán (xem globals.css). */
+const NUT_CHINH =
+  "shrink grow basis-0 gap-1.5 bg-ink px-4 font-extrabold text-bg shadow-[var(--shadow-nut)] hover:-translate-y-0.5 hover:bg-[#35271a] hover:shadow-[var(--shadow-nut-hover)] sm:grow-0 sm:basis-auto sm:px-6";
+
+/** Nút phụ — nền trắng, viền chỉ tơ màu đào (--card-line, không phải --border:
+ *  màu đó gần trùng nền khu sản phẩm nên nút mất mép). Rê chuột thì viền ngả
+ *  hồng đào, nền phớt hồng — đúng nhịp thẻ sản phẩm làm, nhìn là thấy cùng nhà. */
+const NUT_PHU =
+  "shrink grow basis-0 gap-1.5 bg-card px-4 font-bold text-ink ring-1 ring-card-line shadow-[var(--shadow-s)] hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--accent)_12%,var(--card))] hover:ring-accent hover:shadow-[var(--shadow-nut-phu-hover)] sm:grow-0 sm:basis-auto sm:px-6";
+
+/** Nút nhẹ — mượn nguyên áo của nút phụ (nền trắng, viền chỉ tơ), chỉ khác là
+ *  co vừa nội dung và có mũi tên lật lên.
+ *  Trước đây nút này để nền trong suốt cho ra dáng "đường lùi", nhưng khu sản
+ *  phẩm dùng nền kem đậm (--bg-alt) nên trong suốt hoá ra trùng luôn với nền
+ *  — nút chìm nghỉm, không ai thấy. Mà lúc nó hiện thì nó là nút DUY NHẤT
+ *  trên màn, chẳng tranh phần với ai, nên cho hẳn nền trắng là đúng. */
+const NUT_NHE =
+  "nut-thu gap-2 bg-card px-6 font-bold text-ink ring-1 ring-card-line shadow-[var(--shadow-s)] hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--accent)_12%,var(--card))] hover:ring-accent hover:shadow-[var(--shadow-nut-phu-hover)]";
+
 /**
  * Đọc số mẫu mỗi lượt theo bề ngang màn hình.
  *
@@ -76,6 +143,8 @@ export default function Gallery() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const thanhTabRef = useRef<HTMLDivElement>(null);
   const luoiRef = useRef<HTMLDivElement>(null);
+  const khuRef = useRef<HTMLElement>(null);
+  const nutTiepRef = useRef<HTMLButtonElement>(null);
 
   const moiLuot = useSoMoiLuot();
   /** Đã mở bao nhiêu lượt — nhân với moiLuot ra số mẫu đang bày */
@@ -90,6 +159,8 @@ export default function Gallery() {
   const [mocMoi, setMocMoi] = useState(Infinity);
   /** true khi lượt vừa bấm làm biến mất luôn cái nút, phải dời con trỏ bàn phím */
   const matNut = useRef(false);
+  /** true khi vừa bấm "Thu gọn" — lưới ngắn lại đột ngột, phải cuộn ngược lên */
+  const vuaThuGon = useRef(false);
 
   /** Quay về lượt đầu — gọi mỗi lần đổi danh mục, vì danh sách thay mới hoàn toàn */
   const veLuotDau = () => {
@@ -142,6 +213,15 @@ export default function Gallery() {
 
   const conLai = shown.length - hienThi.length;
 
+  /**
+   * Lưới đang dài hơn mặc định — tức là có cái để mà thu lại.
+   *
+   * Tính cả hai đường mở rộng: bấm "Xem tất cả" một phát (xemHet), hay bấm
+   * "Xem tiếp" dăm lượt (soLuot > 1). Danh mục ít mẫu, bày hết ngay từ đầu thì
+   * cả hai đều sai — không hiện nút thu gọn, đúng ý.
+   */
+  const daMoRong = xemHet || soLuot > 1;
+
   // Chốt an toàn: index nào rơi ra ngoài danh sách thì coi như popup đang
   // đóng, khỏi trỏ vào ô trống rồi vỡ. Đo theo `shown` — popup chạy trên trọn
   // danh mục nên kéo hẹp cửa sổ (12 mẫu mỗi lượt tụt còn 9) không còn làm cụt
@@ -150,9 +230,10 @@ export default function Gallery() {
   const chiSoMo =
     openIndex !== null && openIndex < shown.length ? openIndex : null;
 
-  // Bấm nốt lượt cuối là cả cụm nút biến mất, con trỏ bàn phím rơi về <body>
-  // — người dùng bàn phím bấm Tab tiếp là quay lại từ đầu trang. Nên khi nút
-  // sắp mất thì dời con trỏ sang thẻ đầu tiên vừa mở ra.
+  // Bấm nốt lượt cuối là nút vừa bấm tháo khỏi trang (chỗ đó đổi thành "Thu
+  // gọn"), con trỏ bàn phím rơi về <body> — bấm Tab tiếp là quay lại từ đầu
+  // trang. Nên khi nút sắp mất thì dời con trỏ sang thẻ đầu tiên vừa mở ra:
+  // mấy mẫu mới hiện chính là thứ người ta vừa xin xem.
   // preventScroll: mấy thẻ mới nằm PHÍA TRÊN cái nút, không chặn thì trình
   // duyệt kéo màn hình ngược lên, người bấm chuột thấy như trang bị giật.
   useEffect(() => {
@@ -190,6 +271,36 @@ export default function Gallery() {
     setXemHet(true);
   };
 
+  const thuGon = () => {
+    vuaThuGon.current = true;
+    veLuotDau();
+  };
+
+  /**
+   * Thu gọn xong thì kéo người xem về đầu khu sản phẩm.
+   *
+   * Bấm "Thu gọn" lúc đang ở cuối 54 mẫu là trang thụt ngắn lại cả mấy nghìn
+   * px trong một nhịp. Trình duyệt chỉ kẹp chỗ cuộn về đáy trang mới, nên
+   * người xem bị quăng thẳng xuống chân trang — bấm một nút ở khu sản phẩm mà
+   * mở mắt ra đã thấy footer. Cuộn về đỉnh khu là chỗ dễ hiểu nhất: lưới trở
+   * lại y như lúc chưa bấm gì.
+   *
+   * .neo-muc trên thẻ <section> lo phần chừa chỗ cho thanh đầu trang, còn êm
+   * hay giật là do scroll-behavior trong globals.css (tự tắt khi máy bật
+   * "giảm chuyển động").
+   *
+   * Con trỏ bàn phím thì dời sang nút "Xem tiếp" — nút vừa bấm đã tháo khỏi
+   * trang, không dời thì con trỏ rơi về <body>. Nút mới đứng đúng chỗ nút cũ
+   * nên bấm tiếp là thấy liền. preventScroll kẻo nó kéo màn hình xuống lại,
+   * huỷ mất cú cuộn ngay phía trên.
+   */
+  useEffect(() => {
+    if (!vuaThuGon.current) return;
+    vuaThuGon.current = false;
+    khuRef.current?.scrollIntoView({ block: "start" });
+    nutTiepRef.current?.focus({ preventScroll: true });
+  }, [hienThi.length, soLuot, xemHet]);
+
   /**
    * Phím mũi tên trái/phải (và Home/End) để đi giữa các danh mục.
    *
@@ -220,8 +331,9 @@ export default function Gallery() {
   // phẩm nền trắng nổi rõ hơn.
   return (
     <section
+      ref={khuRef}
       id={ID_KHU_SAN_PHAM}
-      className="neo-muc border-y-2 border-border bg-bg-alt py-14 md:py-20"
+      className="neo-muc border-y-2 border-border bg-bg-alt bg-[image:var(--nen-san-pham)] py-14 md:py-20"
     >
       <div className="mx-auto w-[min(100%-1.75rem,1180px)] sm:w-[min(100%-2.5rem,1180px)]">
         <SectionHeading
@@ -232,15 +344,19 @@ export default function Gallery() {
               Bạn nhỏ nào cũng <span className="marker">dễ thương</span>
             </>
           }
-          desc="Bấm vào ảnh để xem lớn hơn — ưng mẫu nào nhắn Zalo hoặc Messenger nhé."
         />
 
-        {/* Thanh danh mục — cuộn ngang được trên điện thoại */}
+        {/* Thanh danh mục.
+            Trước đây trên điện thoại là một hàng cuộn ngang — nửa số danh mục
+            khuất khỏi màn hình, ai không để ý là tưởng chỉ có bấy nhiêu. Giờ
+            cho xếp thành nhiều hàng: thấy đủ 7 mục một lượt, khỏi cuộn. Chip
+            thu nhỏ chữ và đệm ngang cho đỡ choán chỗ nhưng vẫn giữ đủ 44px
+            chiều cao để bấm ngón tay không trượt. */}
         <div
           ref={thanhTabRef}
           role="tablist"
           aria-label="Lọc theo danh mục"
-          className="no-scrollbar -mx-3.5 mb-10 flex gap-2.5 overflow-x-auto px-3.5 pb-3 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0 sm:pb-0"
+          className="mb-10 flex flex-wrap justify-center gap-2 sm:gap-2.5"
         >
           {tabs.map((t, i) => {
             const on = active === t.slug;
@@ -257,14 +373,24 @@ export default function Gallery() {
                 tabIndex={on ? 0 : -1}
                 onKeyDown={(e) => phimTrenTab(e, i)}
                 onClick={() => changeCategory(t.slug)}
-                className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border-2 px-5 text-[14.5px] font-extrabold transition-[background-color,color,border-color,transform] duration-200 ${
+                className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border-2 px-3.5 text-[13.5px] font-extrabold transition-[background-color,color,border-color,transform] duration-200 sm:gap-2 sm:px-5 sm:text-[14.5px] ${
                   on
                     ? "border-ink bg-ink text-bg"
                     : "border-border bg-card hover:-translate-y-0.5 hover:border-ink-soft"
                 }`}
               >
                 {t.name}
-                <span className="text-xs font-bold opacity-60">{t.count}</span>
+                {/* Số mẫu để mờ hơn tên danh mục cho đỡ tranh phần, nhưng chỉ
+                    mờ tới 70% chứ không phải 60%: thẻ chưa chọn có nền trắng,
+                    mà nâu cacao pha 60% trên trắng chỉ còn 3.70:1 — dưới
+                    ngưỡng WCAG AA (cỡ 11–12px vẫn tính là chữ thường, không
+                    được hưởng ngưỡng 3:1 của chữ lớn). 70% được 4.93:1.
+                    Thẻ đang chọn thì nền nâu, chữ kem 60% vốn đã đạt 5.37:1,
+                    nâng lên 70% chỉ càng rõ hơn — nên một con số dùng chung
+                    cho cả hai trạng thái là đủ. */}
+                <span className="text-[11px] font-bold opacity-70 sm:text-xs">
+                  {t.count}
+                </span>
               </button>
             );
           })}
@@ -293,50 +419,79 @@ export default function Gallery() {
           ))}
         </div>
 
-        {/* Cụm nút mở thêm. Ẩn hẳn khi đã bày hết — nút bấm vào không xảy ra
-            gì còn tệ hơn là không có nút.
-            "Xem tất cả" chỉ hiện khi còn dư HƠN một lượt: còn ít hơn thì hai
+        {/* Cụm nút cuối lưới. Còn mẫu chưa bày thì đây là hai nút mở thêm;
+            bày hết rồi thì đúng chỗ ấy thành nút "Thu gọn". Không bao giờ có
+            quá HAI nút — ba nút thì điện thoại không đủ một dòng, mà đó lại
+            đúng là thứ cần tránh.
+            "Tất cả N mẫu" chỉ hiện khi còn dư HƠN một lượt: còn ít hơn thì hai
             nút làm y hệt nhau, bày cả hai chỉ tổ bắt người ta phải chọn giữa
             hai thứ giống nhau.
-            Điện thoại thì hai nút không đủ chỗ nằm cạnh nhau, mà để chúng tự
-            rớt dòng thì mỗi nút một bề ngang, so le trông rất luộm thuộm —
-            nên xếp dọc và ép bằng nhau, chặn 320px kẻo nút dài kín mép màn
-            hình trông như thanh trạng thái. Từ sm trở lên mới cho nằm ngang. */}
-        {conLai > 0 && (
-          <div className="mt-9 flex flex-col items-center gap-2.5 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-3">
-            <button
-              type="button"
-              onClick={xemTiep}
-              aria-controls={ID_LUOI}
-              // nut-tiep: móc cho mũi tên nhún xuống, luật nằm ở globals.css.
-              // transition phải kê ĐÍCH DANH `translate`, y như chuyện `scale`
-              // bên ProductCard: Tailwind v4 dịch -translate-y-1 ra thuộc tính
-              // `translate` riêng chứ không gói vào `transform` nữa. Kê nhầm
-              // `transform` là nút nhảy cụp một phát, không trôi mượt.
-              // Rê chuột thì nhấc hẳn 4px (chứ không phải 2px như mấy nút
-              // khác), nền đậm thêm một nấc, bóng đổ dài ra và có vòng sáng
-              // hồng đào loang quanh viền — nút này là hành động chính của cả
-              // khu sản phẩm nên cho nó phản hồi rõ hơn hẳn.
-              // active:translate-y-0: bấm xuống thì nút hạ về chỗ cũ, có cảm
-              // giác nhấn thật chứ không phải một hình vẽ đứng im.
-              className="nut-tiep inline-flex min-h-12 w-full max-w-[320px] items-center justify-center gap-2 rounded-full border-2 border-ink bg-ink px-6 text-[14.5px] font-extrabold text-bg shadow-[var(--shadow-m)] ring-accent/45 transition-[translate,box-shadow,background-color] duration-200 ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1 hover:bg-[#35271a] hover:shadow-[var(--shadow-l)] hover:ring-4 active:translate-y-0 active:duration-75 sm:w-auto sm:px-7 sm:text-[15px]"
-            >
-              Xem tiếp {Math.min(moiLuot, conLai)} sản phẩm
-              <ChevronDownIcon className="mui-ten size-[18px]" />
-            </button>
+            Áo của ba nút đặt ở đầu file (NUT, NUT_CHINH, NUT_PHU, NUT_NHE) —
+            chỗ đó ghi rõ vì sao mỗi nút một dáng. */}
+        {(conLai > 0 || daMoRong) && (
+          <div className="mt-9 flex justify-center gap-2.5 sm:flex-wrap sm:gap-3">
+            {conLai > 0 ? (
+              <>
+                <button
+                  // key: bắt React dựng nút MỚI thay vì vá lại nút cũ.
+                  // Không có key thì lúc đổi trạng thái React thấy hai bên đều
+                  // mở đầu bằng một <button> nên nó giữ nguyên thẻ cũ và chỉ
+                  // thay class — hoá ra nút nâu đặc "Thêm N mẫu" tự morph thành
+                  // nút "Thu gọn" trong suốt: màu chạy hết 200ms trong khi bề
+                  // rộng đã nhảy tức thì, nhìn như trang bị lỗi.
+                  key="tiep"
+                  ref={nutTiepRef}
+                  type="button"
+                  onClick={xemTiep}
+                  aria-controls={ID_LUOI}
+                  // transition trong NUT kê ĐÍCH DANH `translate`, y như chuyện
+                  // `scale` bên ProductCard: Tailwind v4 dịch -translate-y-0.5 ra
+                  // thuộc tính `translate` riêng chứ không gói vào `transform`
+                  // nữa. Kê nhầm `transform` là nút nhảy cụp một phát.
+                  // active:translate-y-0: bấm xuống thì nút hạ về chỗ cũ, có cảm
+                  // giác nhấn thật chứ không phải một hình vẽ đứng im.
+                  className={`${NUT} ${NUT_CHINH}`}
+                >
+                  Xem thêm
+                  {/* Số mờ đi y như trên nút "Tất cả" và trên thanh danh mục.
+                      70% chứ không phải 60% — lý do ghi ở nút "Tất cả". */}
+                  <span className="text-xs font-bold opacity-70">
+                    {Math.min(moiLuot, conLai)}
+                  </span>
+                </button>
 
-            {conLai > moiLuot && (
+                {conLai > moiLuot && (
+                  <button
+                    key="tat-ca"
+                    type="button"
+                    onClick={xemTatCa}
+                    aria-controls={ID_LUOI}
+                    className={`${NUT} ${NUT_PHU}`}
+                  >
+                    Tất cả
+                    {/* Số đếm để mờ đi — cùng cách thanh danh mục phía trên
+                        hiển thị số mẫu của từng nhóm, nhưng 70% chứ không
+                        phải 60%: nâu cacao pha 60% trên nền trắng chỉ còn
+                        3.70:1, dưới ngưỡng WCAG AA. 70% được 4.93:1, mắt vẫn
+                        thấy nó lùi lại sau chữ. */}
+                    <span className="text-xs font-bold opacity-70">
+                      {shown.length}
+                    </span>
+                  </button>
+                )}
+              </>
+            ) : (
+              /* Bày hết rồi mới tới lượt nút này — đứng đúng chỗ hai nút kia
+                 vừa rời đi, mũi tên lật ngược lên ra ý gấp lại. */
               <button
+                key="thu-gon"
                 type="button"
-                onClick={xemTatCa}
+                onClick={thuGon}
                 aria-controls={ID_LUOI}
-                // Nút phụ đi cùng nhịp nhấc 4px với nút chính, nhưng khoe
-                // theo kiểu khác cho khỏi thành hai nút chính: viền đổi sang
-                // hồng đào và nền trắng phớt hồng lên — đúng cái nhịp mà thẻ
-                // sản phẩm làm khi rê chuột, nên nhìn là thấy cùng một nhà.
-                className="inline-flex min-h-12 w-full max-w-[320px] items-center justify-center rounded-full border-2 border-border bg-card px-6 text-[14.5px] font-extrabold transition-[translate,box-shadow,background-color,border-color] duration-200 ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1 hover:border-accent hover:bg-[color-mix(in_srgb,var(--accent)_22%,var(--card))] hover:shadow-[var(--shadow-m)] active:translate-y-0 active:duration-75 sm:w-auto sm:px-7 sm:text-[15px]"
+                className={`${NUT} ${NUT_NHE}`}
               >
-                Xem tất cả {shown.length} mẫu
+                Thu gọn
+                <ChevronDownIcon className="mui-ten size-4 shrink-0 rotate-180" />
               </button>
             )}
           </div>

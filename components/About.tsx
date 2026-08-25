@@ -1,4 +1,3 @@
-import { categories } from "@/lib/products";
 import SectionHeading from "./SectionHeading";
 
 const STEPS = [
@@ -34,36 +33,28 @@ export default function About() {
           }
         />
 
+        {/* Số nằm bên trái, căn giữa theo chiều dọc so với cụm chữ bên phải */}
         <ol className="grid gap-4 md:grid-cols-3 md:gap-6">
           {STEPS.map((s) => (
             <li
               key={s.n}
-              className="relative rounded-[26px] border-2 border-border bg-card p-6 shadow-[var(--shadow-s)] sm:rounded-[32px] sm:p-7"
+              className="relative flex items-center gap-4 rounded-[26px] border-2 border-border bg-card p-5 shadow-[var(--shadow-s)] sm:gap-5 sm:rounded-[32px] sm:p-6"
             >
               <span
                 aria-hidden="true"
-                className="mb-4 grid size-12 place-items-center rounded-2xl bg-bg-alt font-display text-xl font-bold text-accent-3"
+                className="grid size-12 shrink-0 place-items-center rounded-2xl bg-bg-alt font-display text-xl font-bold text-accent-3 sm:size-14"
               >
                 {s.n}
               </span>
-              <h3 className="mb-2 text-xl font-bold">{s.title}</h3>
-              <p className="font-medium text-ink-soft">{s.body}</p>
+              <div className="min-w-0">
+                <h3 className="mb-1.5 text-xl font-bold text-accent-3 underline decoration-accent/70 decoration-dashed decoration-[1.5px] underline-offset-[5px]">
+                  {s.title}
+                </h3>
+                <p className="font-medium text-ink-soft">{s.body}</p>
+              </div>
             </li>
           ))}
         </ol>
-
-        {/* Điểm qua các danh mục */}
-        <div className="mt-10 flex flex-wrap justify-center gap-2.5">
-          {categories.map((c) => (
-            <span
-              key={c.slug}
-              className="inline-flex items-center gap-2 rounded-full border-2 border-dashed border-border bg-card px-4 py-2.5 text-[14px] font-bold"
-            >
-              {c.name}
-              <span className="text-xs font-extrabold text-accent-3">{c.count}</span>
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );

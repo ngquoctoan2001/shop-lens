@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { fbLink, site } from "@/site.config";
+import { site } from "@/site.config";
 import { heroProducts, totalProducts } from "@/lib/products";
-import { ArrowRightIcon, FlowerIcon } from "./Icons";
+import { FlowerIcon } from "./Icons";
 
 /** Vị trí của 3 tấm ảnh lơ lửng bên phải */
 const FLOAT_POS = [
@@ -94,24 +94,6 @@ export default function Hero() {
             Móc khóa, thú bông, túi ví, hoa len… tất cả đều móc tay từng chiếc.
             Thích mẫu nào nhắn shop một tiếng là có ngay nha!
           </p>
-
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="#san-pham"
-              className="inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 py-3 font-extrabold text-bg shadow-[var(--shadow-m)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[var(--shadow-l)]"
-            >
-              Ngắm sản phẩm
-              <ArrowRightIcon />
-            </a>
-            <a
-              href={fbLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center rounded-full border-2 border-border bg-card px-6 py-3 font-extrabold shadow-[var(--shadow-s)] transition-[transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-ink-soft"
-            >
-              Xem Fanpage
-            </a>
-          </div>
 
           <dl className="mt-8 flex flex-wrap gap-x-7 gap-y-4">
             {stats.map((s) => (

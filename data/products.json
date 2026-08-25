@@ -16,7 +16,7 @@
         {
           "id": "mk-02",
           "name": "Gấu Teddy Khớp Nối",
-          "desc": "Teddy nâu tay chân xoay được, bàn chân kem, khoen sao bạc",
+          "desc": "Teddy nâu khớp xoay, bàn chân kem, khoen sao bạc",
           "image": "/images/mockhoa-02-gau-nau-khop-noi.webp"
         },
         {
@@ -46,31 +46,31 @@
         {
           "id": "mk-07",
           "name": "Cá Taiyaki",
-          "desc": "Bánh cá nướng mini, đủ 4 màu chọn",
+          "desc": "Bánh cá nướng mini, đủ 4 màu, kèm khoen bạc",
           "image": "/images/mockhoa-07-ca-taiyaki-4-mau.webp"
         },
         {
           "id": "mk-08",
           "name": "Cặp Cún Snoopy",
-          "desc": "Đôi cún tai đen vòng cổ đỏ, một bạn ôm tim, một bạn cột nơ",
+          "desc": "Đôi cún tai đen, một ôm tim, một thắt nơ",
           "image": "/images/mockhoa-08-cho-doi-snoopy.webp"
         },
         {
           "id": "mk-09",
           "name": "Gấu Cử Nhân",
-          "desc": "Gấu mặc áo tốt nghiệp, mũ tua vàng - quà mừng ra trường",
+          "desc": "Gấu áo tốt nghiệp, mũ tua vàng, quà ra trường",
           "image": "/images/mockhoa-09-gau-vay-vang-den.webp"
         },
         {
           "id": "mk-10",
           "name": "Bộ Sưu Tập Mini",
-          "desc": "Gấu koala, thỏ nơ, tim, nấm, khủng long...",
+          "desc": "Koala, thỏ nơ hồng, tim đỏ, nấm, khủng long xanh",
           "image": "/images/mockhoa-10-bo-suu-tap-mini.webp"
         },
         {
           "id": "mk-11",
           "name": "Mèo Đội Mũ Cá Taiyaki",
-          "desc": "Cặp mèo trắng - đen trùm mũ bánh cá, charm sao và đá tự nhiên",
+          "desc": "Cặp mèo trắng - đen trùm mũ bánh cá, charm sao",
           "image": "/images/mockhoa-11-meo-doi-trang-den.webp"
         },
         {
@@ -94,7 +94,7 @@
         {
           "id": "mk-15",
           "name": "Heo Xám & Tulip",
-          "desc": "Set heo xám mũi hồng, bạn xanh mini và hoa tulip cười",
+          "desc": "Heo xám mũi hồng, bạn xanh mini, hoa tulip cười",
           "image": "/images/mockhoa-15-chuot-xam-va-hoa-tulip.webp"
         },
         {
@@ -106,7 +106,7 @@
         {
           "id": "mk-17",
           "name": "Charm Mini Ngọt Ngào",
-          "desc": "Set 3 charm tí hon: cún tai đen, mèo nơ đỏ, kem ốc quế",
+          "desc": "Charm mini: cún đen, mèo nơ đỏ, kem ốc quế",
           "image": "/images/mockhoa-17-charm-mini-cun-meo-kem.webp"
         }
       ]
@@ -120,7 +120,7 @@
         {
           "id": "tb-01",
           "name": "Cún Nghiêng Đầu",
-          "desc": "Cún kem mõm dài, nghiêng đầu ngơ ngác, má ửng hồng",
+          "desc": "Cún kem mõm dài, nghiêng đầu ngơ ngác, má hồng",
           "image": "/images/thubong-01-cho-kem-mat-buon.webp"
         },
         {
@@ -132,7 +132,7 @@
         {
           "id": "tb-03",
           "name": "Tuần Lộc Mũi Đỏ",
-          "desc": "Tuần lộc quàng khăn đỏ, hợp mùa Noel",
+          "desc": "Tuần lộc vàng mũi đỏ, khăn quàng dài, hợp Noel",
           "image": "/images/thubong-03-tuan-loc-khan-do.webp"
         },
         {
@@ -144,7 +144,7 @@
         {
           "id": "tb-05",
           "name": "Thỏ Áo Tím",
-          "desc": "Thỏ trắng mắt nhắm, khoác áo tím pastel",
+          "desc": "Thỏ trắng mắt nhắm, má hồng, khoác áo tím pastel",
           "image": "/images/thubong-05-tho-trang-ao-tim.webp"
         },
         {
@@ -156,7 +156,7 @@
         {
           "id": "tb-07",
           "name": "Thỏ Kuromi",
-          "desc": "Thỏ đen mũ sừng đính sọ hồng, váy xù tím, nơ tím hai bên",
+          "desc": "Thỏ đen mũ sừng đính sọ hồng, váy xù tím",
           "image": "/images/thubong-07-tho-den-vay-tim.webp"
         },
         {
@@ -180,19 +180,19 @@
         {
           "id": "tb-12",
           "name": "Cá Hề Đội Mũ Capybara",
-          "desc": "Cá hề xanh môi dày, trùm mũ capybara nâu, đeo túi chéo đỏ",
+          "desc": "Cá hề xanh, mũ capybara nâu, đeo túi chéo đỏ",
           "image": "/images/thubong-12-quai-vat-xanh-moi-hong.webp"
         },
         {
           "id": "tb-13",
           "name": "Set Rau Củ Vui Vẻ",
-          "desc": "Cả khay rau củ quả mặt cười: dâu, cà tím, bắp, nấm...",
+          "desc": "Khay rau củ mặt cười: dâu, cà tím, bắp, nấm...",
           "image": "/images/thubong-13-set-rau-cu-qua-mat-cuoi.webp"
         },
         {
           "id": "tb-14",
           "name": "Thỏ Váy Nâu Nút Gỗ",
-          "desc": "Thỏ trắng nơ nâu, váy yếm nút gỗ, cỡ vừa tay",
+          "desc": "Thỏ trắng nơ nâu, váy yếm nút gỗ, vừa tay",
           "image": "/images/thubong-14-tho-vay-nau-nut-go.webp"
         }
       ]
@@ -206,7 +206,7 @@
         {
           "id": "tv-01",
           "name": "Túi Rút Dâu Tây",
-          "desc": "Túi rút hồng thêu dâu, vừa điện thoại",
+          "desc": "Túi rút hồng đính dâu, dây bông, vừa điện thoại",
           "image": "/images/tuivi-01-tui-rut-day-dau-tay.webp"
         },
         {
@@ -218,7 +218,7 @@
         {
           "id": "tv-03",
           "name": "Túi Tote Basic",
-          "desc": "Túi tote vai form rộng - 4 màu nâu, be, hồng, đen",
+          "desc": "Túi tote form rộng - 4 màu nâu, be, hồng, đen",
           "image": "/images/tuivi-03-tui-tote-4-mau.webp"
         },
         {
@@ -236,13 +236,13 @@
         {
           "id": "tv-06",
           "name": "Ví Cầm Tay Cà Chua",
-          "desc": "Ví nắp gập đỏ hình cà chua, cuống lá xanh, kèm charm cà chua",
+          "desc": "Ví nắp gập hình cà chua đỏ, cuống lá xanh",
           "image": "/images/tuivi-06-vi-mini-dau-tay-do.webp"
         },
         {
           "id": "tv-07",
           "name": "Ví Cầm Tay Nâu",
-          "desc": "Ví nắp gập màu caramel, charm bạch tuộc",
+          "desc": "Ví nắp gập màu caramel, kèm charm bạch tuộc nhỏ",
           "image": "/images/tuivi-07-vi-cam-tay-nau-charm-bach-tuoc.webp"
         }
       ]
@@ -262,7 +262,7 @@
         {
           "id": "qa-02",
           "name": "Croptop Granny",
-          "desc": "Croptop ô vuông granny square, viền bèo",
+          "desc": "Croptop ô vuông granny pastel, viền bèo, dây buộc vai",
           "image": "/images/quanao-02-ao-croptop-granny-square.webp"
         },
         {
@@ -294,7 +294,7 @@
         {
           "id": "pk-04",
           "name": "Khăn Quàng Gấu",
-          "desc": "Khăn quàng cổ màu kem, patch gấu nhỏ",
+          "desc": "Khăn quàng cổ màu kem, gân nổi, đính patch gấu",
           "image": "/images/phukien-04-khan-quang-co-kem-gau.webp"
         },
         {
@@ -306,7 +306,7 @@
         {
           "id": "pk-06",
           "name": "Vòng Tay Hoa Cúc",
-          "desc": "Vòng tay chuỗi hoa cúc - vàng, hồng, xanh",
+          "desc": "Vòng tay chuỗi hoa cúc, ba màu vàng, hồng, xanh",
           "image": "/images/phukien-06-vong-tay-hoa-cuc-3-mau.webp"
         }
       ]
@@ -326,13 +326,13 @@
         {
           "id": "hq-02",
           "name": "Chậu Tulip Đôi",
-          "desc": "Chậu tulip xanh - hồng pastel, mini xinh",
+          "desc": "Chậu tulip xanh và hồng pastel, lá xanh, giỏ kem",
           "image": "/images/hoaqua-02-chau-hoa-tulip-doi.webp"
         },
         {
           "id": "hq-03",
           "name": "Chậu Gấu Cầm Hoa",
-          "desc": "Gấu nhỏ trong chậu, hoa cắm trên đầu",
+          "desc": "Gấu kem trong chậu nâu, hoa đỏ nở trên đầu",
           "image": "/images/hoaqua-03-chau-cay-gau-mini.webp"
         },
         {
@@ -344,13 +344,13 @@
         {
           "id": "hq-05",
           "name": "Bó Hoa Doll Cử Nhân",
-          "desc": "Bó hướng dương kèm doll nữ tốt nghiệp",
+          "desc": "Bó hướng dương, cúc trắng kèm doll nữ cử nhân",
           "image": "/images/hoaqua-05-bo-hoa-tot-nghiep-doll-nu.webp"
         },
         {
           "id": "hq-06",
           "name": "Bó Hoa Hồng Pastel",
-          "desc": "Bó tone hồng, kèm thỏ hoặc heo đội mũ cử nhân",
+          "desc": "Bó hoa tone hồng, kèm thỏ hoặc heo cử nhân",
           "image": "/images/hoaqua-06-bo-hoa-hong-thu-cung.webp"
         },
         {
@@ -362,13 +362,13 @@
         {
           "id": "hq-08",
           "name": "Lót Ly Thằn Lằn Xanh",
-          "desc": "Thằn lằn xanh nằm dang chân, thân tròn dẹt kê vừa đáy ly",
+          "desc": "Thằn lằn xanh dang chân, thân dẹt kê đáy ly",
           "image": "/images/thubong-11-ech-xanh-nam-ngua.webp"
         },
         {
           "id": "hq-09",
           "name": "BST Quả Cam",
-          "desc": "Lót ly hình quả cam, kèm khay 4 quả mini và charm cam rời",
+          "desc": "Lót ly hình quả cam, kèm khay 4 quả mini",
           "image": "/images/phukien-01-mu-beret-qua-cam.webp"
         }
       ]

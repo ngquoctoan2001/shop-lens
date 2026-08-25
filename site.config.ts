@@ -47,6 +47,8 @@ export const site = {
     facebook: "https://www.facebook.com/xuyen.huynh.94801116",
     /** Link Instagram của shop */
     instagram: "https://www.instagram.com/lennhasuen/",
+    /** Link TikTok của shop */
+    tiktok: "https://www.tiktok.com/@lennhasuen",
   },
 
   /** Ba con số khoe ở màn hình đầu tiên */
@@ -72,6 +74,8 @@ export const zaloLink = `https://zalo.me/${site.contact.zalo}`;
 export const fbLink = site.contact.facebook;
 /** Link Instagram */
 export const igLink = site.contact.instagram;
+/** Link TikTok */
+export const ttLink = site.contact.tiktok;
 
 /** Số điện thoại có dấu cách cho dễ đọc: 0969 634 653 */
 export const zaloDisplay = site.contact.zalo.replace(

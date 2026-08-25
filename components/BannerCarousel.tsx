@@ -106,6 +106,12 @@ const beRongVong = (soDo: SoDo, soTam: number) =>
  * vòng để về lại bản giữa: ba bản giống hệt nhau nên trên màn hình không đổi
  * lấy một pixel, mà hai bên lúc nào cũng còn đường để vuốt tiếp.
  *
+ * Bố cục có hai nếp. Điện thoại: mỗi lần đúng MỘT tấm nằm giữa màn. Từ sm trở
+ * lên: khung cuộn không tràn mép màn nữa mà thu về giữa trang (rộng bằng khung
+ * tiêu đề), mỗi lần thấy đúng HAI tấm co giãn theo bề ngang màn hình, hai bên
+ * chừa lề — và mọi bước đi (tự chạy, vuốt, bấm chấm) đều nhảy nguyên CẶP sang
+ * hai tấm khác; hàng chấm khi đó cũng đếm theo cặp chứ không theo từng tấm.
+ *
  * Tự chạy sẽ ngưng khi: rê chuột/focus vào, đang lướt (và 8 giây sau đó), dải
  * banner trôi khỏi màn hình, người xem bấm nút dừng, hoặc máy đang bật chế độ
  * "giảm chuyển động".
@@ -128,6 +134,8 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
   const [vuaLuot, setVuaLuot] = useState(false); // vừa lướt tay / kéo chuột
   const [trongTam, setTrongTam] = useState(true); // còn nằm trong màn hình
   const [giamChuyenDong, setGiamChuyenDong] = useState(false);
+  /** Từ sm (640px) trở lên: xem 2 tấm một lần — tự chạy và hàng chấm đi theo CẶP */
+  const [manRong, setManRong] = useState(false);
 
   const dangTuChay =
     quayVong && batTuChay && !reVao && !vuaLuot && trongTam && !giamChuyenDong;
@@ -281,9 +289,16 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
       const { moc, cuoiDuong } = laySoDo(track);
       const dich = (i: number) => Math.min(moc[i], cuoiDuong);
 
-      // Cứ nhích thêm một tấm là xong — hết bản này đã có bản sau nối vào, còn
-      // việc dời về bản giữa đã có veBanGiua lo.
-      let ke = viTriRef.current + 1;
+      // Điện thoại nhích một tấm; màn rộng xem hai tấm một lần nên nhảy
+      // nguyên CẶP — sang đúng hai tấm mới, không tấm nào vắt qua hai nhịp.
+      // Hết bản này đã có bản sau nối vào, việc dời về bản giữa veBanGiua lo.
+      let ke = viTriRef.current + (manRong ? 2 : 1);
+      // Nhảy cặp thì phải đáp vào tấm CHẴN của mỗi bản — tấm lẻ đã tắt điểm
+      // snap ở màn rộng, nhắm vào đó là cuộn xong trình duyệt giật thêm nhịp
+      // nữa. Số danh mục chẵn thì phép cộng 2 tự giữ nếp; dòng này phòng hờ
+      // số lẻ (chẵn lẻ gãy ở chỗ nối hai bản) hoặc vừa đổi cỡ màn xong còn
+      // đứng ở tấm lẻ.
+      if (manRong && (ke % soTam) % 2 === 1) ke -= 1;
       // Chỉ khi KHÔNG quay vòng được mới có chuyện hết dải, hoặc mấy tấm cuối
       // lùi không hết cỡ về lề nên chỗ dừng trùng nhau — cứ đổi tiếp thì banner
       // đứng im nguyên một nhịp 5 giây. Gặp vậy thì quay về tấm đầu.
@@ -299,7 +314,7 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
       den(ke);
     }, DOI_SAU);
     return () => clearInterval(hen);
-  }, [dangTuChay, soTam, banGiua, den, laySoDo]);
+  }, [dangTuChay, soTam, banGiua, manRong, den, laySoDo]);
 
   /* --- Bấm chấm thì tới BẢN GẦN NHẤT của tấm đó, khỏi chạy ngược cả dải --- */
   const denTam = useCallback(
@@ -321,6 +336,18 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const doc = () => setGiamChuyenDong(mq.matches);
+    doc();
+    mq.addEventListener("change", doc);
+    return () => mq.removeEventListener("change", doc);
+  }, []);
+
+  /* --- Màn rộng hay hẹp: rộng thì đi theo cặp, hẹp thì từng tấm ---
+     Mốc 640px phải trùng breakpoint sm của Tailwind, vì CSS cũng đổi bố cục
+     đúng tại đó (bề rộng tấm, điểm snap chẵn/lẻ). Lệch nhau là có cảnh mắt
+     thấy hai tấm mà hẹn giờ vẫn nhích từng tấm một. */
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const doc = () => setManRong(mq.matches);
     doc();
     mq.addEventListener("change", doc);
     return () => mq.removeEventListener("change", doc);
@@ -453,6 +480,29 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
     cards.map((c, i) => ({ c, i, ban })),
   ).flat();
 
+  /* Hàng chấm: điện thoại mỗi tấm một chấm; màn rộng xem hai tấm một lần nên
+     mỗi CẶP một chấm — sáu tấm còn ba chấm, bấm chấm nào là sang nguyên cặp
+     đó (iGoc là tấm đứng đầu cặp, denTam sẽ tự tìm bản gần nhất). */
+  const cham = manRong
+    ? Array.from({ length: Math.ceil(soTam / 2) }, (_, p) => {
+        const dau = cards[p * 2];
+        const sau = cards[p * 2 + 1];
+        return {
+          key: dau.slug,
+          iGoc: p * 2,
+          nhan: sau
+            ? `Xem banner ${dau.name} và ${sau.name}`
+            : `Xem banner ${dau.name}`,
+          dangXem: Math.floor(index / 2) === p,
+        };
+      })
+    : cards.map((c, i) => ({
+        key: c.slug,
+        iGoc: i,
+        nhan: `Xem banner ${c.name}`,
+        dangXem: i === index,
+      }));
+
   return (
     <div
       onMouseEnter={() => setReVao(true)}
@@ -472,7 +522,15 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
         // tấm kế ra hẳn ngoài màn: tấm rộng (100vw - 32px) căn giữa thì mỗi
         // bên còn chừa 16px, cộng thêm khe 32px nữa là tấm bên cạnh bắt đầu ở
         // 100vw + 16px — khuất hẳn. Khe này nằm ngoài màn nên không ai thấy.
-        className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-8 overflow-x-auto pb-4 active:cursor-grabbing sm:gap-5"
+        //
+        // Từ sm trở lên khung cuộn thôi tràn mép màn, thu về đúng khung giữa
+        // trang (rộng như tiêu đề "Khám phá" phía trên) và tự căn giữa — mắt
+        // chỉ thấy đúng hai tấm, ngoài khung là bị xén. px-4 với scroll-px-4
+        // phải đi cặp: px chừa 16px hai đầu cho bóng đổ của tấm ngoài cùng
+        // khỏi bị cắt phựt, còn scroll-px lùi điểm snap vào đúng bấy nhiêu —
+        // thiếu nó trình duyệt neo tấm sát mép khung, lệch 16px so với mốc
+        // doKhung đã đo (doKhung trừ paddingLeft khi tính chỗ dừng).
+        className="no-scrollbar flex cursor-grab snap-x snap-mandatory gap-8 overflow-x-auto pb-4 active:cursor-grabbing sm:mx-auto sm:w-[min(100%-2.5rem,1180px)] sm:gap-5 sm:scroll-px-4 sm:px-4"
       >
         {daiBanner.map(({ c, i, ban }) => {
           /* Bản giữa mới là bản "thật": trình đọc màn hình và phím Tab chỉ làm
@@ -491,9 +549,14 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
               }
               // Điện thoại: mỗi lần đúng MỘT tấm, nằm giữa màn. Tấm rộng gần
               // hết bề ngang (chừa 16px mỗi bên làm lề) và snap-center để nó
-              // dừng ngay chính giữa. Từ sm trở lên màn rộng rãi, quay lại
-              // kiểu cũ — xếp mấy tấm cạnh nhau, căn mép trái.
-              className="khung-ti-le group relative w-[calc(100vw-2rem)] shrink-0 snap-center overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[52vw] sm:snap-start sm:rounded-[32px] lg:w-[42vw]"
+              // dừng ngay chính giữa. Từ sm trở lên: mỗi lần đúng HAI tấm —
+              // bề rộng tấm là (ruột khung trừ khe hở) chia đôi, nên hai tấm
+              // cộng khe vừa khít khung, không ló nửa tấm thứ ba. Và chỉ tấm
+              // CHẴN có điểm snap (tấm lẻ sm:snap-align-none): vuốt hay kéo
+              // kiểu gì cũng đáp về nguyên cặp, không dừng vắt ngang giữa cặp.
+              className={`khung-ti-le group relative w-[calc(100vw-2rem)] shrink-0 snap-center overflow-hidden rounded-[24px] shadow-[var(--shadow-m)] transition-transform duration-300 hover:-translate-y-1 sm:w-[calc((100%-1.25rem)/2)] sm:rounded-[32px] ${
+                i % 2 === 1 ? "sm:snap-align-none" : "sm:snap-start"
+              }`}
               // Khung 16:9 dựng bằng .khung-ti-le (xem app/globals.css) chứ
               // không phải aspect-ratio — lý do ghi ở BANNER_RATIO.
               style={{ "--ti-le": BANNER_RATIO } as CSSProperties}
@@ -504,16 +567,21 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
                     src={c.image}
                     alt={that ? c.name : ""}
                     fill
-                    // Banner tự đổi sau 5 giây nên ba tấm đầu phải tải sẵn, để
-                    // lười tải thì tới lượt nó mới tải, người xem thấy ô trống
-                    // chớp một cái. Ba tấm sau cứ để tải khi cuộn gần tới.
+                    // Banner tự đổi sau 5 giây nên mấy tấm đầu phải tải sẵn,
+                    // để lười tải thì tới lượt nó mới tải, người xem thấy ô
+                    // trống chớp một cái. Màn rộng mở màn thấy tấm 0–1, nhịp
+                    // đầu sang cặp 2–3 — nên tải sẵn bốn tấm đầu, còn lại để
+                    // tải khi cuộn gần tới.
                     // Chỉ tính trên bản giữa — bản người xem thấy lúc mới vào;
                     // hai bản chép dùng lại đúng đường dẫn ấy nên có sẵn trong
                     // bộ nhớ đệm, không tốn thêm lượt tải nào.
                     priority={that && i === 0}
-                    loading={that && i < 3 ? "eager" : "lazy"}
+                    loading={that && i < 4 ? "eager" : "lazy"}
                     draggable={false}
-                    sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1024px) 52vw, 560px"
+                    // Bề rộng thật của tấm để chọn cỡ ảnh: điện thoại gần trọn
+                    // màn; 640–1220 là nửa khung giữa trang (50vw trừ lề với
+                    // khe); trên 1220 khung khoá 1180px nên tấm đứng ở 564px.
+                    sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 1220px) calc(50vw - 46px), 564px"
                     className="select-none object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                   />
                   {/* Vệt sáng mờ ở đỉnh. Sáu ảnh đang dùng đều để trống góc
@@ -585,44 +653,43 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
       {/* --- Hàng chấm + nút dừng --- */}
       {quayVong && (
         <div className="mx-auto flex w-[min(100%-1.75rem,1180px)] items-center justify-center gap-1 sm:w-[min(100%-2.5rem,1180px)]">
-          {cards.map((c, i) => {
-            const dangXem = i === index;
-            return (
-              <button
-                key={c.slug}
-                type="button"
-                onClick={() => {
-                  clearTimeout(hoiSuc.current);
-                  setVuaLuot(true);
-                  hoiSuc.current = setTimeout(
-                    () => setVuaLuot(false),
-                    NGHI_SAU_KHI_LUOT,
-                  );
-                  denTam(i);
-                }}
-                aria-label={`Xem banner ${c.name}`}
-                aria-current={dangXem ? "true" : undefined}
-                // Chấm chỉ cao 8px, nhưng nút bọc ngoài cao 44px cho dễ bấm
-                className="grid h-11 place-items-center px-2"
+          {cham.map((ch) => (
+            <button
+              key={ch.key}
+              type="button"
+              onClick={() => {
+                clearTimeout(hoiSuc.current);
+                setVuaLuot(true);
+                hoiSuc.current = setTimeout(
+                  () => setVuaLuot(false),
+                  NGHI_SAU_KHI_LUOT,
+                );
+                denTam(ch.iGoc);
+              }}
+              aria-label={ch.nhan}
+              aria-current={ch.dangXem ? "true" : undefined}
+              // Chấm chỉ cao 8px, nhưng nút bọc ngoài cao 44px cho dễ bấm
+              className="grid h-11 place-items-center px-2"
+            >
+              <span
+                className={`block h-2 overflow-hidden rounded-full transition-[width,background-color] duration-300 ${
+                  ch.dangXem
+                    ? "w-8 bg-border"
+                    : "w-2 bg-border hover:bg-ink-soft"
+                }`}
               >
-                <span
-                  className={`block h-2 overflow-hidden rounded-full transition-[width,background-color] duration-300 ${
-                    dangXem ? "w-8 bg-border" : "w-2 bg-border hover:bg-ink-soft"
-                  }`}
-                >
-                  {dangXem && (
-                    <span
-                      // Đổi key để vạch chạy lại từ đầu mỗi lần sang tấm mới
-                      key={`${index}-${dangTuChay}`}
-                      className={`block h-full rounded-full bg-accent-3 ${
-                        dangTuChay ? "banner-progress" : "w-full"
-                      }`}
-                    />
-                  )}
-                </span>
-              </button>
-            );
-          })}
+                {ch.dangXem && (
+                  <span
+                    // Đổi key để vạch chạy lại từ đầu mỗi lần sang tấm mới
+                    key={`${index}-${dangTuChay}`}
+                    className={`block h-full rounded-full bg-accent-3 ${
+                      dangTuChay ? "banner-progress" : "w-full"
+                    }`}
+                  />
+                )}
+              </span>
+            </button>
+          ))}
 
           <button
             type="button"
