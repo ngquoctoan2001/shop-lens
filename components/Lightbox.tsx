@@ -281,7 +281,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
             <Image
               key={product.image}
               src={product.image}
-              alt={product.name}
+              alt={product.alt}
               fill
               sizes="(max-width: 767px) 320px, 470px"
               className="animate-photo-in object-contain"
@@ -377,7 +377,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
                       type="button"
                       data-active={i === index}
                       onClick={() => onNavigate(i)}
-                      aria-label={p.name}
+                      aria-label={`Xem ${p.name}`}
                       aria-current={i === index}
                       className={`relative size-14 shrink-0 overflow-hidden rounded-[15px] border-2 transition-[border-color,transform,opacity] duration-200 sm:size-[60px] ${
                         i === index

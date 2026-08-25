@@ -62,7 +62,7 @@ export default function Hero() {
                   duyệt sẽ tải nó trước mọi thứ khác. */}
               <Image
                 src={p.imageThumb}
-                alt={p.name}
+                alt={p.alt}
                 width={480}
                 height={480}
                 priority={i === 0}

@@ -22,6 +22,14 @@ export default function Logo({
       className={`flex items-center gap-2.5 ${className}`}
       aria-label={`${site.name} — về trang chủ`}
     >
+      {/* alt ĐỂ TRỐNG LÀ CỐ Ý, đừng "sửa" thành "logo lennhasuen".
+          Cả cụm này đã là một link có aria-label riêng, lại có sẵn tên shop
+          và dòng tagline hiện bằng chữ ngay bên cạnh. Đặt alt vào nữa thì
+          trình đọc màn hình đọc thành "lennhasuen về trang chủ, logo
+          lennhasuen, lennhasuen, Handmade Crochet" — một cái link mà nhắc tên
+          shop bốn lần.
+          Phần SEO của logo không nằm ở alt: nó nằm ở thuộc tính `logo` trong
+          khối dữ liệu có cấu trúc Organization (JSON-LD). */}
       <Image
         src="/images/logo-mark.webp"
         alt=""

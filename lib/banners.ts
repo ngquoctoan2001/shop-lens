@@ -21,6 +21,8 @@ export type BannerSlot = {
   image: string;
   /** màu chữ đè lên ảnh — mỗi banner một màu, xem MAU_CHU bên dưới */
   mauChu: string;
+  /** câu mô tả ảnh cho thẻ alt — sinh ở lib/products.ts, xem altBanner() */
+  alt: string;
 };
 
 /**
@@ -55,6 +57,7 @@ export const bannerSlots: BannerSlot[] = categories.map((c) => ({
   count: c.count,
   image: `/banners/${c.slug}.webp`,
   mauChu: MAU_CHU[c.slug] ?? MAU_CHU_MAC_DINH,
+  alt: c.altAnh,
 }));
 
 /**

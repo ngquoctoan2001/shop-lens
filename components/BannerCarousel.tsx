@@ -15,6 +15,8 @@ export type BannerCard = {
   mauChu: string;
   /** ảnh đã nằm trong public/banners/ chưa — kiểm tra lúc dựng trang */
   coAnh: boolean;
+  /** câu mô tả ảnh cho thẻ alt — sinh ở lib/products.ts, xem altBanner() */
+  alt: string;
 };
 
 /** Bao lâu thì tự sang tấm kế tiếp */
@@ -565,7 +567,13 @@ export default function BannerCarousel({ cards }: { cards: BannerCard[] }) {
                 <>
                   <Image
                     src={c.image}
-                    alt={that ? c.name : ""}
+                    /* Chỉ bản giữa mới mang alt thật. Dải banner được chép
+                       làm ba bản đặt liền nhau để cuộn thành vòng tròn (xem
+                       SO_BAN), hai bản chép đã aria-hidden — cho chúng alt
+                       nữa là cùng một câu mô tả lặp ba lần trong HTML, trình
+                       đọc màn hình đọc thừa mà máy tìm kiếm thì thấy như
+                       nhồi từ khóa. */
+                    alt={that ? c.alt : ""}
                     fill
                     // Banner tự đổi sau 5 giây nên mấy tấm đầu phải tải sẵn,
                     // để lười tải thì tới lượt nó mới tải, người xem thấy ô

@@ -70,7 +70,7 @@ export default function ProductCard({ product, onOpen, className = "" }: Props) 
               chưa cuộn tới. */}
           <Image
             src={product.imageThumb}
-            alt={product.name}
+            alt={product.alt}
             fill
             loading="lazy"
             sizes="(max-width: 520px) 45vw, (max-width: 1024px) 33vw, 280px"
