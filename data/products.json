@@ -1,5 +1,5 @@
 {
-  "_note": "Ten san pham (name) va mo ta (desc) la TAM/FAKE - anh chi can sua lai. Slug + image la that.",
+  "_note": "Tên (name) và mô tả (desc) đã CHỐT — nội dung thật, không phải bản tạm nữa. Sửa hai trường này là đổi luôn thẻ alt của ảnh: alt sinh tự động từ name + desc + danh mục, xem altSanPham() trong lib/products.ts. Giữ nguyên id, slug và image.",
   "categories": [
     {
       "slug": "moc-khoa",

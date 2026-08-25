@@ -50,7 +50,10 @@ khoe ở đầu trang, và các câu chạy trên dải băng nghiêng.
 
 ### 2. Đổi tên / mô tả sản phẩm → `data/products.json`
 
-Tên sản phẩm hiện tại là **tên tạm**, sửa thoải mái. Mỗi sản phẩm có dạng:
+Tên và mô tả sản phẩm **đã chốt** — đây là nội dung thật đang chạy. Vẫn sửa
+được, nhưng nhớ một điều: hai trường này cũng là nguồn sinh **thẻ alt của ảnh**
+(xem `altSanPham()` trong `lib/products.ts`) — sửa ở đây là đổi luôn câu mà
+Google Ảnh và trình đọc màn hình đọc được. Mỗi sản phẩm có dạng:
 
 ```json
 {
