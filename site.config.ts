@@ -49,6 +49,8 @@ export const site = {
     instagram: "https://www.instagram.com/lennhasuen/",
     /** Link TikTok của shop */
     tiktok: "https://www.tiktok.com/@lennhasuen",
+    /** Gian hàng Shopee của shop */
+    shopee: "https://shopee.vn/tragbeooo",
   },
 
   /** Ba con số khoe ở màn hình đầu tiên */
@@ -76,6 +78,8 @@ export const fbLink = site.contact.facebook;
 export const igLink = site.contact.instagram;
 /** Link TikTok */
 export const ttLink = site.contact.tiktok;
+/** Link Shopee */
+export const shopeeLink = site.contact.shopee;
 
 /** Số điện thoại có dấu cách cho dễ đọc: 0969 634 653 */
 export const zaloDisplay = site.contact.zalo.replace(

@@ -1,16 +1,24 @@
-import { fbLink, igLink, site, ttLink, zaloLink } from "@/site.config";
+import {
+  fbLink,
+  igLink,
+  shopeeLink,
+  site,
+  ttLink,
+  zaloLink,
+} from "@/site.config";
 import Logo from "./Logo";
 import CurrentYear from "./CurrentYear";
 import {
   FacebookIcon,
   FlowerIcon,
   InstagramIcon,
+  ShopeeIcon,
   TikTokIcon,
   ZaloIcon,
 } from "./Icons";
 
 /**
- * Chân trang gọn: một hàng (logo · ba icon mạng xã hội) rồi tới dòng bản quyền.
+ * Chân trang gọn: một hàng (logo · các icon mạng xã hội) rồi tới dòng bản quyền.
  *
  * Không lặp lại menu ở đây nữa: trên máy tính menu đã nằm sẵn trên header,
  * trên điện thoại thì có thanh nổi ở đáy màn hình (components/BottomNav.tsx)
@@ -18,16 +26,16 @@ import {
  *
  * Mốc đổi kiểu là md (768px) — cùng mốc mà thanh nổi ở đáy tự ẩn đi và phần
  * đệm pb-28 chừa chỗ cho nó được trả về bình thường, nên cả chân trang đổi
- * dáng một lượt. Dưới md: xếp dọc, căn giữa hết. Từ md: logo bên trái, ba
+ * dáng một lượt. Dưới md: xếp dọc, căn giữa hết. Từ md: logo bên trái, các
  * icon bên phải.
  */
 
 /**
- * Nút tròn của ba mạng xã hội.
+ * Nút tròn của các mạng xã hội.
  *
  * Rộng 44px cho ngón tay bấm trên điện thoại vẫn trúng. Lúc thường là
  * khuyên trắng viền kem, icon nâu (--accent-3); rê chuột vào thì đảo lại —
- * nền nâu, icon màu kem — kèm nhích lên nửa nấc cho mềm. Cả ba dùng chung
+ * nền nâu, icon màu kem — kèm nhích lên nửa nấc cho mềm. Tất cả dùng chung
  * một tông nâu của shop, không mượn màu thương hiệu để khỏi chọi bảng màu.
  */
 const SOCIAL =
@@ -39,6 +47,7 @@ const MANG_XA_HOI = [
   { ten: "Facebook", href: fbLink, Icon: FacebookIcon },
   { ten: "Instagram", href: igLink, Icon: InstagramIcon },
   { ten: "TikTok", href: ttLink, Icon: TikTokIcon },
+  { ten: "Shopee", href: shopeeLink, Icon: ShopeeIcon },
 ];
 
 export default function Footer() {

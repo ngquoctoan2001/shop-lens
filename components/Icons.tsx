@@ -332,10 +332,10 @@ export function MessageIcon({ className = "size-6" }: IconProps) {
 }
 
 /* --------------------------------------------------------------------------
-   Ba icon mạng xã hội ở chân trang
+   Các icon mạng xã hội ở chân trang
 
-   Cả ba đều vẽ NÉT (không tô đặc) cùng độ dày 1.9 như mấy icon còn lại của
-   web, để ba cái đứng cạnh nhau nhìn ra một bộ chứ không phải ba logo đi
+   Tất cả đều vẽ NÉT (không tô đặc) cùng độ dày 1.9 như mấy icon còn lại của
+   web, để các icon đứng cạnh nhau nhìn ra một bộ chứ không phải logo đi
    mượn mỗi nơi một kiểu. Không dùng màu thương hiệu (xanh Zalo, xanh
    Facebook, gradient Instagram) — chúng chọi với bảng màu kem–nâu; ở đây
    icon ăn theo màu chữ của nút bọc ngoài nên tô nâu được hết.
@@ -416,6 +416,26 @@ export function TikTokIcon({ className = "size-5" }: IconProps) {
     >
       <circle cx="9.1" cy="16.2" r="3.4" />
       <path d="M12.5 16.2V4.3c.4 2.9 2.7 5.1 5.6 5.4" />
+    </svg>
+  );
+}
+
+/**
+ * Shopee — túi mua sắm có quai và chữ S, giản lược từ logo gốc để giữ cùng
+ * nét mảnh, màu và kích thước thị giác với các icon mạng xã hội bên cạnh.
+ */
+export function ShopeeIcon({ className = "size-5" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`${base} ${className}`}
+      aria-hidden="true"
+      {...stroke}
+      strokeWidth={1.9}
+    >
+      <path d="M5.2 8.3h13.6l.8 11.1a1.3 1.3 0 0 1-1.3 1.4H5.7a1.3 1.3 0 0 1-1.3-1.4Z" />
+      <path d="M8.5 9V7.1a3.5 3.5 0 0 1 7 0V9" />
+      <path d="M14.8 12.2c-.6-.5-1.5-.8-2.6-.8-1.4 0-2.4.6-2.4 1.6 0 2.5 5.3 1.1 5.3 3.7 0 1.1-1.1 1.9-2.7 1.9-1.2 0-2.3-.4-3.1-1" strokeWidth={1.65} />
     </svg>
   );
 }
