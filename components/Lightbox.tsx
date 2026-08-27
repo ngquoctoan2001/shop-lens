@@ -358,7 +358,7 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
             {/* Ghi chú về giá */}
             <p className="mt-3 flex items-start gap-2.5 rounded-2xl border-2 border-dashed border-accent/60 bg-accent/10 px-3.5 py-3 text-[12.5px] font-bold text-accent-3 sm:text-[13.5px]">
               <FlowerIcon className="mt-[3px] size-3.5 shrink-0 text-accent" />
-              <span>Nhắn shop để biết giá và thời gian hoàn làm nhé</span>
+              <span>Nhắn shop để biết giá và thời gian làm nhé</span>
             </p>
 
             {/* Dải ảnh nhỏ để nhảy nhanh sang mẫu khác */}

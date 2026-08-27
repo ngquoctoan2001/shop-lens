@@ -85,7 +85,7 @@ export default function Hero() {
                 "bạn" rớt lại một mình ở dòng cuối, nhìn rất lẻ. */}
             Từng mũi len,
             <br />
-            <span className="marker">gói trọn thương</span>
+            <span className="marker">gói trọn iu thương</span>
             <br />
             gửi bạn
           </h1>
