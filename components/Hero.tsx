@@ -80,9 +80,13 @@ export default function Hero() {
             Nhận đặt móc theo yêu cầu
           </span>
 
-          <h1 className="text-[clamp(38px,5.6vw,66px)] font-bold tracking-[-0.03em]">
+          <h1 className="text-[10.2vw] min-[360px]:text-[clamp(38px,5.6vw,66px)] font-bold tracking-[-0.03em]">
             {/* Ngắt sẵn ba dòng. Cứ để trình duyệt tự xuống dòng thì chữ
-                "bạn" rớt lại một mình ở dòng cuối, nhìn rất lẻ. */}
+                "bạn" rớt lại một mình ở dòng cuối, nhìn rất lẻ.
+
+                Dưới 360px phải co chữ theo bề ngang màn: .marker đặt
+                white-space: nowrap nên dòng giữa không xuống dòng được,
+                cứ để 38px là "thương" bị cắt cụt ở máy 320px. */}
             Từng mũi len,
             <br />
             <span className="marker">gói trọn iu thương</span>
@@ -92,7 +96,7 @@ export default function Hero() {
 
           <p className="my-5 max-w-[47ch] text-[clamp(16px,1.9vw,19px)] font-medium text-ink-soft">
             Móc khóa, thú bông, túi ví, hoa len… tất cả đều móc tay từng chiếc.
-            Thích mẫu nào nhắn shop một tiếng là có ngay nha!
+            Thích mẫu nào nhắn shop tư vấn ngay nha!
           </p>
 
           <dl className="mt-8 flex flex-wrap gap-x-7 gap-y-4">

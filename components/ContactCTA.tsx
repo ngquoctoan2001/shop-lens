@@ -35,7 +35,7 @@ export default function ContactCTA() {
         </h2>
         <p className="relative mx-auto mb-8 mt-4 max-w-[50ch] font-medium text-ink-soft">
           Gửi shop ảnh mẫu hoặc kể ý tưởng — màu gì, size bao nhiêu, tặng dịp
-          nào. Shop báo giá và thời gian làm ngay nha!
+          nào. Shop báo giá và thời gian hoàn thành nha!
         </p>
 
         <ContactButtons tone="light" className="relative" />
